@@ -1,6 +1,6 @@
-var maxPass = 2;
+var maxPass = 25;
 
-var maxTime = "0:05";  // 1:30 = 1 minute and 30 seconds
+var maxTime = "1:00";  // 1:30 = 1 minute and 30 seconds
 
 data = {
 	"Multiplication" : {
