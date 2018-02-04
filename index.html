@@ -134,30 +134,18 @@ function startCountDown() {
 	var currentTimeTotalSeconds = parseInt(m) * 60 + parseInt(s);
 	var percentageComplete = currentTimeTotalSeconds / lastCurrentSetTimeTotalSeconds;
 
-	var maxClip = 53; // pixels
+	var maxClip = 48; // pixels
 	var startFaster = 0; // start 12 pixels in
 
 	var progress = maxClip * (1 - percentageComplete) + startFaster;
 		progress = Math.ceil(progress);
 
-	// var deg = getRandomInt(360);
-    /*filter: grayscale(100%);*/
-
 	var svgID = document.getElementById('zachSVG');
 	svgID.style.clipPath = "circle(" + progress + "px at 0 0px)";
 
-	// var rotateAmount = 0;
-	// if (percentageComplete <= 50) 
-	// 	rotateAmount = (100 - (50 - percentageComplete)) / 100 * 360 * -1;
-
-	// progressID.style.transform = 'rotate(' + rotateAmount + 'deg';
-	// progressID.pseudoStyle = ("before", "transform", 'rotate(' + rotateAmount + 'deg);');
-	// document.styleSheets[0].addRule('.progress-65:before', 'transform: rotate(' + rotateAmount + 'deg);');
-
-
 	// document.getElementById('countDown').innerHTML = m + ":" + s;
 	currentTime = m + ":" + s;
-	console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
+	// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
 
 	countDownTimeout = setTimeout(startCountDown, 1000);
 }
