@@ -5,688 +5,25 @@
 	<title>MAD MINUTES</title>
 	<link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
+	<link href="madminutes.css" rel="stylesheet">
 	<script src="config.js"></script>
 </head>
 
 
-<style>
-body {
-	margin:0;
-	padding:0;
-}
-
-#wrapper {
-	padding: 1em;
-}
-
-#zachSVG {
-    width: 1.5em;
-    /*float: right;*/
-    position: relative;
-    left: -0.8em;
-    top: 0.1em;
-    z-index: -1;
-}
-
-.zachSVGBW {
-    /*opacity: 0.75;*/
-    filter: grayscale(100%);
-    -webkit-filter: grayscale(100%);
-}
-
-#logo {
-	float: left;
-	font-size: 200%;
-	font-family: 'Faster One', cursive;
-	/*border: 1px solid pink;*/
-	padding-left: 0.5em;
-}
-
-.logoColor {
-	color: #676767;
-	color: #ec501f;
-}
-
-.logoLighter {
-	color: #bdbdbd;
-	color: #f5720f;
-}
-
-.logoDark {
-	color: #8e8e8e;
-}
-
-.logoDarkLighter {
-	color: #bdbdbd;
-}
-
-#home { 
-	display: none;
-
-	float: right; 
-	margin-right: 2em;
-	position: relative;
-	/*height: 0.25em;*/
-
-	border-radius: 1em;
-	height: 2em;
-	background: #ececec;
-
-	font-weight: bold;
-	font-size: 110%;
-}
-
-
-#setTitleWrapper {
-	float: right;
-	position: relative;	
-
-	border-radius: 1em;
-	height: 2em;
-	background: #ececec;
-	z-index: -1;
-
-	font-weight: bold;
-	font-size: 110%;
-
-	right: -2em;
-}
-
-/*For vertical-alignment : https://codepen.io/edge0703/pen/iHJuA; */
-#home:before {
-  content: "";
-  display: inline-block;
-  vertical-align: middle;
-  height: 100%;
-}
-
-#setTitle {
-
-	display: inline-block;
-	vertical-align: middle;
-
-	padding-left: 1em;
-
-    height: 2.6em;
-
-	padding-right: 0.5em;
-
-}
-
-.weakerFont {
-	color: #737373;
-}
-
-#setLabel {
-	color: #404040;
-	padding-left: 0.5em;
-}
-
-
-/* close button from enjoycss.com */
-.close-button {
-	display: inline-block;
-	-webkit-box-sizing: content-box;
-	-moz-box-sizing: content-box;
-	box-sizing: content-box;
-	width: 0.25em;
-	height: 0.25em;
-	position: relative;
-	border: none;
-	-webkit-border-radius: 1em;
-	border-radius: 1em;
-	font: normal 8em/normal Arial, Helvetica, sans-serif;
-	color: rgba(0,0,0,1);
-	-o-text-overflow: clip;
-	text-overflow: clip;
-	background: #bfbfbf;
-}
-
-.close-button::before {
-  display: inline-block;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  width: 0.15em;
-  height: 0.03em;
-  position: absolute;
-  content: "";
-  top: 0.11em;
-  left: 0.055em;
-  border: none;
-  font: normal 100%/normal Arial, Helvetica, sans-serif;
-  color: rgba(0,0,0,1);
-  -o-text-overflow: clip;
-  text-overflow: clip;
-  background: #ffffff;
-  text-shadow: none;
-  -webkit-transform: rotateZ(45deg)   ;
-  transform: rotateZ(45deg)   ;
-}
-
-.close-button::after {
-  display: inline-block;
-  -webkit-box-sizing: content-box;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-  width: 0.15em;
-  height: 0.03em;
-  position: absolute;
-  content: "";
-  top: 0.11em;
-  left: 0.055em;
-  border: none;
-  font: normal 100%/normal Arial, Helvetica, sans-serif;
-  color: rgba(0,0,0,1);
-  -o-text-overflow: clip;
-  text-overflow: clip;
-  background: #ffffff;
-  text-shadow: none;
-  -webkit-transform: rotateZ(-45deg)   ;
-  transform: rotateZ(-45deg)   ;
-}
-
-.typeWrapper {
-	font-family: 'Oswald', sans-serif;
-	font-size: 130%;
-	/*border: 1px solid red;*/
-	margin-top: 1em;
-
-    position: relative;
-    left: -100em;
-    -webkit-animation: slide 0.5s forwards;
-    -webkit-animation-delay: 0s;
-    animation: slide 0.5s forwards;
-    animation-delay: 0s;
-
-}
-
-@-webkit-keyframes slide {
-    100% { 
-    	top: 0; 
-    	right: 0; 
-    	left: 0; 
-    	bottom: 0; 
-
-		color: #693610;
-    	background: none;
-    }
-}
-
-@keyframes slide {
-    100% { 
-    	top: 0; 
-    	right: 0; 
-    	left: 0; 
-    	bottom: 0; 
-
-		color: #693610;
-    	background: none;
-    }
-}
-
-.blur {
-	filter: blur(7px);
-}
-
-/*base code*/
-.animated {
-  -webkit-animation-duration: 1s;
-  animation-duration: 1s;
-  -webkit-animation-fill-mode: both;
-  animation-fill-mode: both;
-}
-.animated.infinite {
-  -webkit-animation-iteration-count: infinite;
-  animation-iteration-count: infinite;
-}
-.animated.hinge {
-  -webkit-animation-duration: 2s;
-  animation-duration: 2s;
-}
-/*the animation definition*/
-@-webkit-keyframes lightSpeedOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    -webkit-transform: translate3d(7em, 0, 0) skewX(10deg);
-    transform: translate3d(7em, 0, 0) skewX(10deg);
-    opacity: 0;
-  }
-}
-@keyframes lightSpeedOut {
-  0% {
-    opacity: 1;
-  }
-  100% {
-    -webkit-transform: translate3d(7em, 0, 0) skewX(10deg);
-    -ms-transform: translate3d(7em, 0, 0) skewX(10deg);
-    transform: translate3d(7em, 0, 0) skewX(10deg);
-    opacity: 0;
-  }
-}
-.lightSpeedOut {
-  -webkit-animation-name: lightSpeedOut;
-  animation-name: lightSpeedOut;
-  -webkit-animation-timing-function: ease-in;
-  animation-timing-function: ease-in
-}
-
-#message {
-	font-family: 'Oswald', sans-serif;
-	float: left;
-	position: relative;	
-	/*border: 1px solid black;*/
-
-}
-
-.redLight { background: red; }
-.yellowLight { background: #FFCD00; }
-.greenLight { background: #00FF00; }
-
-#readySetGoWrapper {
-	font-size: 153%;
-	text-align: center;
-	width: 4em;
-    border-radius: 5px;
-	color:white;
-
-	/*border: 1px solid red;*/
-}
-
-#readySetGoMessage {
-	/*border: 1px solid blue;*/
-
-/*    -webkit-animation: pulse 1s forwards;
-    -webkit-animation-delay: 0s;
-    animation: pulse 1s forwards;
-    animation-delay: 0s;
-    opacity: 0;
-*/
-}
-
-.typeHeader {
-	font-size: 130%;
-	/*border: 1px solid red;*/
-	padding: 0.5em 1em 0.5em 0em;
-	color: #693610;
-}
-
-.setWrapper {
-
-}
-
-.set {
-	float: left;
-	padding: 1em;
-	border: 1px solid #eaeaea;
-	width: 2em;
-	text-align: center;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3), 0 0 40px rgba(128, 128, 128, 0.1) inset;
-    border-color: #dedede;
-	transition: all 0.5s ease-in-out;
-	font-weight: bold;
-
-	position: relative;
-	/*left: -100em;*/
-    -webkit-animation: slide 1.0s forwards;
-    -webkit-animation-delay: 0s;
-    animation: slide 1.0s forwards;
-    animation-delay: 0s;
-}
-
-.set:hover {
-    box-shadow: 0 1px 4px rgba(238, 120, 32, 0.3), 0 0 24px rgba(238, 105, 31, 0.4) inset;
-    border-color: #ffb985;
-	text-shadow: 0 0 2px #ff4000;
-    color: #982200;	
-    transition: all 0.5s ease-in-out;
-
-}
-
-.mult {
-	font-size: 150%;
-	/*border: 1px solid pink;*/
-	float: left;
-	width: 3em;
-	height: 3em;
-	padding-top: 0.5em;
-	padding-right: 1em;
-	padding-bottom: 2em;
-
-    position: relative;
-    left: -100em;
-    -webkit-animation: slide 0.5s forwards;
-    -webkit-animation-delay: 0s;
-    animation: slide 0.5s forwards;
-    animation-delay: 0s;
-}
-
-.symbol {
-    padding-top: 1.9em;
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-	color: #737373;
-}
-.leftSide {
-	/*border: 1px solid red;*/
-	float: right;
-	height: 3em;
-	border-bottom: 1px solid #afafaf;
-}
-.rightSide {
-	/*border: 1px solid blue;*/
-	float: right;
-	height: 3em;
-	border-bottom: 1px solid #afafaf;
-}
-
-.top {
-	/*border: 1px solid green;*/
-	padding-bottom: 0.3em;
-}
-.bottom {
-	/*border: 1px solid orange;*/
-}
-
-.correctedAnswer {
-	background: #daffe3;
-}
-
-.checkAnswer {
-	background: #ffdada;
-}
-
-.inputArea input {
-	font-size: 82%;
-	text-align: right;
-	float: right;
-	width: 2.5em;
-	height: 2em;
-	border: 2px solid #eaeaea;
-    border-radius: 5px;
-    right: -0.2em;
-    padding-left: 0.2em;
-    padding-right: 0.2em;
-    position: relative;
-    color: #947b2f;
-}
-
-.inputArea input:focus {
-    outline: none;
-    border-color: #9ecaed;
-    box-shadow: 0 0 7px #9ecaed;
-}
-
-.product {
-	text-align: right;
-}
-
-.productFirstNum {
-    padding-top: 0.7em;
-}
-
-.productSecNum {
-
-}
-
-.denominator {
-	float: right;
-	margin-top: 0.2em;
-	padding-top: 2px;
-	padding-right: 0.3em;
-	border-right: 2px #a7a7a7 solid; 
-	border-radius: 0px 0px 10px 0px;
-}
-
-.numerator {
-	float: right;
-	margin-top: 0.2em;
-	border-top: 2px #a7a7a7 solid;
-	padding-left: 0.3em;
-	padding-right: 0.1em;
-}
-
-.division {
-	/*border: 1px solid blue;*/
-}
-
-#mathContent {}
-
-#scoreSheet {
-	display: none;
-	position: fixed;
-
-	background: #ec501f;
-	width: 70%;
-	/*height: 10%;*/
-    /*top: -10%;*/
-
-
-    /* center the element */
-    right: 0;
-    left: 0;
-    margin-right: auto;
-    margin-left: auto;
-
-    z-index: 2;
-
-    border-radius: 0 0 5px 5px;
-
-	animation-duration: 0.3s;
-	animation-name: slideDown;
-	animation-direction: alternate;
-
-}
-
-
-@-webkit-keyframes slideDown {
-  from {
-  	top: -5em;
-  }
-
-  to {
-  	top: 0em;
-  }
-
-    /*10%, 90% { -webkit-transform: translateY(10%); }*/
-}
-@-moz-keyframes slideDown {
-    0%, 100% { -moz-transform: translateY(8%); }
-    /*10%, 90% { -moz-transform: translateY(10%); }*/
-}
-
-
-
-
-#scoreContent {
-    margin-left: 1em;
-	margin-right: 1em;
-
-	display: flex;
-	height: 100%;
-	align-items: center;
-    justify-content: space-between;
-
-}
-
-
-#score {
-	position: relative;
-	float:right;
-}
-
-a {
-	font-family: 'Oswald', sans-serif;
-    background: #f5720f;
-/*    background: -moz-linear-gradient(top, #de0009 0%, #950006 100%);
-    background: -o-linear-gradient(top, #de0009 0%, #950006 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #de0009), color-stop(100%, #950006));
-    background: -webkit-linear-gradient(top, #de0009 0%, #950006 100%);
-    background: linear-gradient(top, #de0009 0%, #950006 100%);
-*/    border: solid #dc4619;
-    border-width: 1px 1px 1px 0;
-    -moz-border-radius: 0 5px 5px 0;
-    -webkit-border-radius: 0 5px 5px 0;
-    border-radius: 0 5px 5px 0;
-    display: inline-block;
-	height: 2.5em;
-    line-height: 2.4em;
-    margin-left: 1.3em;
-    margin-right: 1em;
-    padding: 0 1em 0 1em;
-    position: relative;
-    text-decoration: none;
-}
-
-a:before {
-    background: #f5720f;
-    /*background: -moz-linear-gradient(-45deg, #de0009 0%, #950006 100%);*/
-    /*background: -o-linear-gradient(-45deg, #de0009 0%, #950006 100%);*/
-    /*background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #de0009), color-stop(100%, #950006));*/
-    /*background: -webkit-linear-gradient(-45deg, #de0009 0%, #950006 100%);*/
-    /*background: linear-gradient(-45deg, #de0009 0%, #950006 100%);*/
-    border: solid #dc4619;
-    border-width: 0 0 1px 1px;
-	border-radius: 0.2em 0 0.2em 0.2em;
-    content: '';
-    display: block;
-	height: 1.8em;
-    left: -0.9em;
-    position: absolute;
-    top: 0.34em;
-    -moz-transform: rotate(45deg);
-    -webkit-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    transform: rotate(45deg);
-    width: 1.9em;
-}
-
-a:hover, a:focus {
-    border-color: #c74018;
-    background: #da4a1d;
-/*    background: -moz-linear-gradient(top, #b50007 0%, #7e0004 100%);
-    background: -o-linear-gradient(top, #b50007 0%, #7e0004 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #b50007), color-stop(100%, #7e0004));
-    background: -webkit-linear-gradient(top, #b50007 0%, #7e0004 100%);
-    background: linear-gradient(top, #b50007 0%, #7e0004 100%);
-*/}
-
-a:hover:before, a:focus:before {
-    border-color: #c74018;
-    background: #da4a1d;
-/*    background: -moz-linear-gradient(-45deg, #b50007 0%, #7e0004 100%);
-    background: -o-linear-gradient(-45deg, #b50007 0%, #7e0004 100%);
-    background: -webkit-gradient(linear, left top, right bottom, color-stop(0%, #b50007), color-stop(100%, #7e0004));
-    background: -webkit-linear-gradient(-45deg, #b50007 0%, #7e0004 100%);
-    background: linear-gradient(-45deg, #b50007 0%, #7e0004 100%);
-*/}
-
-a span {
-    color: #fff;
-    font-weight: bold;
-    position: relative;
-}
-
-
-#scoreMessage {
-	color: #fff;
-	font-weight: bolder;
-	font-size: 362%;
-	font-size: 300%;
-}
-
-#numCorrect {
-	float: left;	
-	/*border: 1px solid red;*/
-	font-size: 362%;
-	color: white;
-}
-
-#passCheck {
-	display: none;
-	float: left;	
-	margin-left: 0.5em;
-	/*border: 1px solid blue;*/
-}
-
-
-
-/*From: https://codepen.io/haniotis/pen/KwvYLO*/
-/*$color--green: #7ac142;*/
-/*$curve: cubic-bezier(0.650, 0.000, 0.450, 1.000);*/
-
-.checkmark__circle {
-  stroke-dasharray: 166;
-  stroke-dashoffset: 166;
-  stroke-width: 2;
-  stroke-miterlimit: 10;
-  /*stroke: $color--green;*/
-  stroke: #458800;
-  fill: none;
-  animation: stroke .6s cubic-bezier(0.650, 0.000, 0.450, 1.000) forwards;
-}
-
-.checkmark {
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  display: block;
-  stroke-width: 6;
-  stroke: #fff;
-  stroke-miterlimit: 10;
-  margin: 10% auto;
-  box-shadow: inset 0px 0px 0px #458800;
-  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
-}
-
-.checkmark__check {
-  transform-origin: 50% 50%;
-  stroke-dasharray: 48;
-  stroke-dashoffset: 48;
-  animation: stroke .3s cubic-bezier(0.650, 0.000, 0.450, 1.000) .8s forwards;
-}
-
-@keyframes stroke {
-  100% {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes scale {
-  0%, 100% {
-    transform: none;
-  }
-  50% {
-    transform: scale3d(1.1, 1.1, 1);
-  }
-}
-
-@keyframes fill {
-  100% {
-    box-shadow: inset 0px 0px 0px 30px #458800;
-  }
-}
-
-.clearer { clear: both; }
-</style>
-
-
-
 <script>
-
-
 var timeoutA = null;
 var timeoutB = null;
 
 var countDownTimeout = null;
 
 var currentTime = maxTime;
+var lastCurrentSetTime = maxTime;
+
 var selectedType = null;
 var selectedSet = null;
 var selectedProblemData = null;  // randomized problems can go here. 
 var numberCorrect = 0;
+
 
 document.addEventListener('keydown', function(e) {
 	var leftArrowKey = 37;
@@ -758,26 +95,71 @@ function setup() {
 }
 
 
+function displayReadySetGo() {
+	outputReadySetGoMessage("Ready", "redLight");
+	timeoutA = setTimeout( function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
+	timeoutB = setTimeout( function () { 
+			outputReadySetGoMessage("Go", "greenLight");
+			var el = document.getElementById('mathContent');
+			el.classList.remove("blur");
+
+			startCountDown();
+		}, 3000);
+
+		// calculateScore();
+}
+
+
+
 // from https://codepen.io/ishanbakshi/pen/pgzNMv
 function startCountDown() {
-  // var presentTime = document.getElementById('countDown').innerHTML;
-  var timeArray = currentTime.split(/[:]+/);
-  var m = timeArray[0];
-  var s = checkSecond((timeArray[1] - 1));
-  if(s==59){m=m-1}
+	// var presentTime = document.getElementById('countDown').innerHTML;
+	var timeArray = currentTime.split(/[:]+/);
+	var m = timeArray[0];
+	var s = checkSecond((timeArray[1] - 1));
+	if(s==59){m=m-1}
 
-  if(m<0) {
-  	console.log('timer completed')
-  	currentTime = maxTime;
-  	calculateScore();
-  	return; 
-  }
-  
-  // document.getElementById('countDown').innerHTML = m + ":" + s;
-  currentTime = m + ":" + s;
-  console.log( m + ":" + s);
+	if(m<0) {
+		console.log('timer completed')
+		currentTime = maxTime;
+		// calculateScore();
+		return; 
+	}
 
-  countDownTimeout = setTimeout(startCountDown, 1000);
+
+	var lcta = lastCurrentSetTime.split(/[:]+/);
+	var m_last = lcta[0];
+	var s_last = lcta[1];
+	var lastCurrentSetTimeTotalSeconds = parseInt(m_last) * 60 + parseInt(s_last);
+	var currentTimeTotalSeconds = parseInt(m) * 60 + parseInt(s);
+	var percentageComplete = currentTimeTotalSeconds / lastCurrentSetTimeTotalSeconds;
+
+	var maxClip = 53; // pixels
+	var startFaster = 0; // start 12 pixels in
+
+	var progress = maxClip * (1 - percentageComplete) + startFaster;
+		progress = Math.ceil(progress);
+
+	// var deg = getRandomInt(360);
+    /*filter: grayscale(100%);*/
+
+	var svgID = document.getElementById('zachSVG');
+	svgID.style.clipPath = "circle(" + progress + "px at 0 0px)";
+
+	// var rotateAmount = 0;
+	// if (percentageComplete <= 50) 
+	// 	rotateAmount = (100 - (50 - percentageComplete)) / 100 * 360 * -1;
+
+	// progressID.style.transform = 'rotate(' + rotateAmount + 'deg';
+	// progressID.pseudoStyle = ("before", "transform", 'rotate(' + rotateAmount + 'deg);');
+	// document.styleSheets[0].addRule('.progress-65:before', 'transform: rotate(' + rotateAmount + 'deg);');
+
+
+	// document.getElementById('countDown').innerHTML = m + ":" + s;
+	currentTime = m + ":" + s;
+	console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
+
+	countDownTimeout = setTimeout(startCountDown, 1000);
 }
 
 function checkSecond(sec) {
@@ -962,20 +344,6 @@ function displayScoring() {
 				scoreSheetID.style.display = "block";
 }
 
-function displayReadySetGo() {
-	outputReadySetGoMessage("Ready", "redLight");
-	timeoutA = setTimeout( function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
-	timeoutB = setTimeout( function () { 
-			outputReadySetGoMessage("Go", "greenLight");
-			var el = document.getElementById('mathContent');
-			el.classList.remove("blur");
-
-			startCountDown();
-		}, 3000);
-
-		// calculateScore();
-}
-
 function outputReadySetGoMessage(message, cssClass) {
 	var el = document.getElementById('message');
 	el.innerHTML = "";
@@ -1114,6 +482,32 @@ function shuffle(array) {
 function getRandomInt(max) {
   return Math.floor(Math.random() * Math.floor(max));
 }
+
+
+
+// http://mcgivery.com/htmlelement-pseudostyle-settingmodifying-before-and-after-in-javascript/
+var UID = {
+	_current: 0,
+	getNew: function(){
+		this._current++;
+		return this._current;
+	}
+};
+
+HTMLElement.prototype.pseudoStyle = function(element,prop,value){
+	var _this = this;
+	var _sheetId = "pseudoStyles";
+	var _head = document.head || document.getElementsByTagName('head')[0];
+	var _sheet = document.getElementById(_sheetId) || document.createElement('style');
+	_sheet.id = _sheetId;
+	var className = "pseudoStyle" + UID.getNew();
+	
+	_this.className +=  " "+className; 
+	
+	_sheet.innerHTML += " ."+className+":"+element+"{"+prop+":"+value+"}";
+	_head.appendChild(_sheet);
+	return this;
+};
 
 
 
@@ -1373,6 +767,7 @@ function getProblemsForTypeAndSet(type, set) {
 				<img id="zachSVG" src="zach-dinosaur.svg"></img>
 			</div>
 
+
 			<div id="message"></div>
 			<!-- <div id="countDown">0:01</div> -->
 
@@ -1391,6 +786,7 @@ function getProblemsForTypeAndSet(type, set) {
 			<div class="clearer"></div>
 		</div>
 		<div id="mathContent"></div>
+
 	</div>
 </body>
 
