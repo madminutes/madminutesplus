@@ -17,12 +17,10 @@ body {
 }
 
 .zachSVGBW {
-    /*background: url(zach-dinosaur.svg);*/
     /*opacity: 0.75;*/
-    /*filter: grayscale(100%);*/
-    /*-webkit-filter: grayscale(100%);*/
-    /*clip-path: circle(0px at 0 0px);*/
-}
+/*    filter: grayscale(100%);
+    -webkit-filter: grayscale(100%);
+*/}
 
 #logo {
 	float: left;
