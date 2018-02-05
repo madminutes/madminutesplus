@@ -268,13 +268,13 @@ function checkNumberCorrect(type) {
 				calculatedAnswer = firstNum * secNum;
 				break;
 			case "Division":
-				calculatedAnswer = secNum / firstNum;
+				calculatedAnswer = firstNum / secNum;
 				break;
 			default:
 		}
 
 
-		console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
+		//console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
 
 		var answerInputID = document.getElementById("answer_" + i);
 		if (answerInputID.value != "") {
@@ -701,12 +701,12 @@ function htmlForType(type, prob, idx) {
 	    				<div class='bottom'>\
 		    				<div class='numerator'>\
 			    				<div class='division'>"
-			    				+ secNum + 
+			    				+ firstNum + 
 			    				"</div>\
 		    				</div>\
 		    				<div class='denominator'>\
 			    				<div class='division'>"
-			    				+ firstNum + 
+			    				+ secNum + 
 			    				"</div>\
 			    			</div>\
 			    			<div class='clearer'></div>\
