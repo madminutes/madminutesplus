@@ -1,6 +1,8 @@
 var maxPass = 25;
-
 var maxTime = "1:30";  // 1:30 = 1 minute and 30 seconds
+
+var maxPass50 = 40;  // maxPass for 50 question quizzes
+var maxTime50 = "3:00";  // maxTime for 50 question quizzes
 
 data = {
 	"Division" : {

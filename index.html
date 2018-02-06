@@ -16,12 +16,13 @@ var timeoutB = null;
 
 var countDownTimeout = null;
 
-var currentTime = maxTime;
-var lastCurrentSetTime = maxTime;
+var currentTime = null;
 
 var selectedType = null;
 var selectedSet = null;
 var selectedProblemData = null;  // randomized problems can go here. 
+var selectedMaxPass = null;
+var selectedMaxTime = null;
 var numberCorrect = 0;
 
 
@@ -105,6 +106,7 @@ function displayReadySetGo() {
 			var el = document.getElementById('mathContent');
 			el.classList.remove("blur");
 
+
 			startCountDown();
 		}, 3000);
 
@@ -123,13 +125,12 @@ function startCountDown() {
 
 	if(m<0) {
 		console.log('timer completed')
-		currentTime = maxTime;
 		calculateScore();
 		return; 
 	}
 
 
-	var lcta = lastCurrentSetTime.split(/[:]+/);
+	var lcta = selectedMaxTime.split(/[:]+/);
 	var m_last = lcta[0];
 	var s_last = lcta[1];
 	var lastCurrentSetTimeTotalSeconds = parseInt(m_last) * 60 + parseInt(s_last);
@@ -147,7 +148,7 @@ function startCountDown() {
 
 	// document.getElementById('countDown').innerHTML = m + ":" + s;
 	currentTime = m + ":" + s;
-	// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
+	console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
 
 	countDownTimeout = setTimeout(startCountDown, 1000);
 }
@@ -252,6 +253,19 @@ function calculateScore() {
 
 }
 
+function setupMaxVarsForSet(set) {
+	var match = set.match(/50/);
+	if (match) {
+		selectedMaxTime = maxTime50;
+		currentTime = selectedMaxTime;
+		selectedMaxPass = maxPass50;
+	}
+	else {
+		selectedMaxTime = maxTime;
+		currentTime = selectedMaxTime;
+		selectedMaxPass = maxPass;
+	}
+}
 
 function checkNumberCorrect(type) {
 
@@ -318,7 +332,7 @@ function displayScoring() {
 			var numCorrectID = 	document.getElementById("numCorrect");
 			numCorrectID.innerHTML = "+" + numberCorrect;
 
-			if (numberCorrect >= maxPass) {
+			if (numberCorrect >= selectedMaxPass) {
 				var passCheckID = 	document.getElementById("passCheck");
 				passCheckID.style.display = "block";
 
@@ -558,9 +572,8 @@ function setupProblemsForTypeAndSet(type, set) {
 	var problems = getProblemsForTypeAndSet(type, set);
 	outputProblems(type, problems);
 	setSetLabel(set);
+	setupMaxVarsForSet(set);
 	displayReadySetGo();
-
-
 }
 
 function changeToBlackWhiteLogo() {
