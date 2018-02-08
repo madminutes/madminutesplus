@@ -395,16 +395,20 @@ function outputSets() {
 					html += "<div class='setWrapper'>";
 						sets.forEach( function (set, i) {
 
-							var topVal = getRandMoveValue();
-							var rightVal = getRandMoveValue();
-							var bottomVal = getRandMoveValue();
-							var leftVal = getRandMoveValue();
-							// var colorValA = rainbow(5, Math.random(5));
-							// var colorValB = rainbow(5, Math.random(5));
-							var colorValA = getRandomColor();
-							var colorValB = getRandomColor();
+							// only output the set name if there is data for it
+							var setData = data[type][set];
+							if (setData.length > 0) {
+								var topVal = getRandMoveValue();
+								var rightVal = getRandMoveValue();
+								var bottomVal = getRandMoveValue();
+								var leftVal = getRandMoveValue();
+								// var colorValA = rainbow(5, Math.random(5));
+								// var colorValB = rainbow(5, Math.random(5));
+								var colorValA = getRandomColor();
+								var colorValB = getRandomColor();
 
-							html += "<div class='set' style='color:" + colorValA + "; background:" + colorValB + "; top:" + topVal + "em; right:" + rightVal + "em; bottom:" + bottomVal + "em; left:" + leftVal + "em;' onClick='setupProblemsForTypeAndSet(\"" + type + "\",\"" + set + "\");'>" + set + "</div>";
+								html += "<div class='set' style='color:" + colorValA + "; background:" + colorValB + "; top:" + topVal + "em; right:" + rightVal + "em; bottom:" + bottomVal + "em; left:" + leftVal + "em;' onClick='setupProblemsForTypeAndSet(\"" + type + "\",\"" + set + "\");'>" + set + "</div>";
+							}
 						});
 					html += "</div>";
 
