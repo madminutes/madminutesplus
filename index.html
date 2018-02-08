@@ -234,7 +234,7 @@ function checkNumberCorrect(type) {
 		}
 
 
-		//console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
+		// console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
 
 		var answerInputID = document.getElementById("answer_" + i);
 		if (answerInputID.value != "") {
@@ -282,7 +282,11 @@ function displayScoring() {
 				passCheckID.style.display = "block";
 
 				scoreMessageArray = passedMessages;
+			} else {
+				var passCheckID = 	document.getElementById("passCheck");
+				passCheckID.style.display = "none";
 			}
+
 
 			var randomInt = getRandomInt(scoreMessageArray.length);
 			var message = scoreMessageArray[randomInt];
