@@ -175,60 +175,7 @@ function calculateScore() {
 
 	numberCorrect = 0; // reset this
 
-	switch(selectedType)	 {
-		case "Multiplication":
-			console.log("Multiplcation calculation:");
-
-			selectedProblemData.forEach( function(prob, i) {
-				// go through each problem and check the input answer with calculated one
-				// if it's wrong, then highlight the wrong answer in red. 
-
-				var firstNum = prob[0];
-				var secNum = prob[1];
-				var calculatedAnswer = firstNum * secNum;
-
-				// console.log(firstNum + " * " + secNum + " = " + calculatedAnswer );
-
-				var answerInputID = document.getElementById("answer_" + i);
-				if (answerInputID.value != "") {
-
-					// if any input changes on wrong problems, then we can change the class to correct
-					answerInputID.addEventListener('input', function (evt) {
-						// console.log(this);
-
-						var studentAnswer = this.value
-
-						var idx = getIdxFromInputID(this.id);
-						var prob = selectedProblemData[idx];
-						var firstNum = prob[0];
-						var secNum = prob[1];
-						var calculatedAnswer = firstNum * secNum;
-
-						if (calculatedAnswer == studentAnswer)	{
-							answerInputID.classList.remove("checkAnswer");
-							answerInputID.classList.add("correctedAnswer");
-						}
-					});
-
-					var studentAnswer = parseFloat(answerInputID.value);
-					if (calculatedAnswer != studentAnswer)	{
-						answerInputID.classList.add("checkAnswer");
-					}
-					else {
-						numberCorrect++;
-					}
-				}
-
-			});
-			break;
-
-		case "Division":
-			console.log("Division calculation:");
-			checkNumberCorrect(selectedType);
-			break;
-		default:
-	}
-
+	checkNumberCorrect(selectedType);
 
 	displayScoring();
 
@@ -249,9 +196,8 @@ function calculateScore() {
 	// save set score for top 5 per set (most completed problems)
 	// when accomplished. 
 	// 
-
-
 }
+
 
 function setupMaxVarsForSet(set) {
 	var match = set.match(/50/);
@@ -303,7 +249,6 @@ function checkNumberCorrect(type) {
 				var prob = selectedProblemData[idx];
 				var firstNum = prob[0];
 				var secNum = prob[1];
-				var calculatedAnswer = firstNum * secNum;
 
 				if (calculatedAnswer == studentAnswer)	{
 					answerInputID.classList.remove("checkAnswer");
