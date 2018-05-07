@@ -341,7 +341,7 @@ body {
 
 }
 
-.mult {
+.mult,.divProb {
 	font-size: 150%;
 	/*border: 1px solid pink;*/
 	float: left;

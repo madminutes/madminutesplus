@@ -6,11 +6,13 @@
 	<link href="https://fonts.googleapis.com/css?family=Faster+One" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css?family=Oswald" rel="stylesheet">
 	<link href="madminutes.css" rel="stylesheet">
+	<script src="madminutes.js"></script>
 	<script src="config.js"></script>
 </head>
 
 
 <script>
+const typeSetData = CONFIG.data;
 var timeoutA = null;
 var timeoutB = null;
 
@@ -92,11 +94,27 @@ function setup() {
 	// el.innerHTML = 'Hello World!';
 
 
-	outputSets();
-
-	// setupProblemsForTypeAndSet("Division","A");
+	// displayMainPage();
+	// displayProblemSetPage(MM.CONST.TYPE.MUL, "K");
+	displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
 }
 
+function displayMainPage() {
+	clearTimeouts();
+	changeToColorLogo();
+	hideCloseButton();
+	hideMessage();
+	hideScoreSheet();
+
+	const html = MM.htmlForTypeSetData(typeSetData); 
+	htmlToMain(html);
+}
+
+function htmlToDiv(id,html) {
+	var el = document.getElementById(id);
+	el.innerHTML = html;
+}
+function htmlToMain(html) { htmlToDiv("mathContent", html); }
 
 function displayReadySetGo() {
 	outputReadySetGoMessage("Ready", "redLight");
@@ -159,15 +177,17 @@ function checkSecond(sec) {
   return sec;
 }
 
-
-function calculateScore() {
+function clearTimeouts() {
 	if (timeoutA)
 		clearTimeout(timeoutA);
 	if (timeoutB)
 		clearTimeout(timeoutB);
 	if (countDownTimeout)
 		clearTimeout(countDownTimeout);
+}
 
+function calculateScore() {
+	clearTimeouts();
 
 	console.log("Calculating score.");	
 	var el = document.getElementById('scoreSheet');
@@ -202,14 +222,14 @@ function calculateScore() {
 function setupMaxVarsForSet(set) {
 	var match = set.match(/50/);
 	if (match) {
-		selectedMaxTime = maxTime50;
+		selectedMaxTime = CONFIG.maxTime50;
 		currentTime = selectedMaxTime;
-		selectedMaxPass = maxPass50;
+		selectedMaxPass = CONFIG.maxPass50;
 	}
 	else {
-		selectedMaxTime = maxTime;
+		selectedMaxTime = CONFIG.maxTime;
 		currentTime = selectedMaxTime;
-		selectedMaxPass = maxPass;
+		selectedMaxPass = CONFIG.maxPass;
 	}
 }
 
@@ -311,63 +331,6 @@ function setSetLabel(label) {
 		el.innerHTML = label;
 }
 
-function outputSets() {
-	changeToColorLogo();
-	hideCloseButton();
-	hideMessage();
-	hideScoreSheet();
-
-	var type = Object.keys(data);
-
-	if(timeoutA)
-		clearTimeout(timeoutA);
-
-	if(timeoutB)
-		clearTimeout(timeoutB);
-
-	if(countDownTimeout)
-		clearTimeout(countDownTimeout);
-
-	var el = document.getElementById('mathContent');
-		el.innerHTML = "";
-		el.classList.remove("blur");
-
-	var html = "";
-	type.forEach( function(type, i) {
-		var sets = Object.keys(data[type]);
-
-		html += "<div class='typeWrapper'>\
-					<div class='typeHeader'>"
-						+ type +
-					"</div>";
-
-					html += "<div class='setWrapper'>";
-						sets.forEach( function (set, i) {
-
-							// only output the set name if there is data for it
-							var setData = data[type][set];
-							if (setData.length > 0) {
-								var topVal = getRandMoveValue();
-								var rightVal = getRandMoveValue();
-								var bottomVal = getRandMoveValue();
-								var leftVal = getRandMoveValue();
-								// var colorValA = rainbow(5, Math.random(5));
-								// var colorValB = rainbow(5, Math.random(5));
-								var colorValA = getRandomColor();
-								var colorValB = getRandomColor();
-
-								html += "<div class='set' style='color:" + colorValA + "; background:" + colorValB + "; top:" + topVal + "em; right:" + rightVal + "em; bottom:" + bottomVal + "em; left:" + leftVal + "em;' onClick='setupProblemsForTypeAndSet(\"" + type + "\",\"" + set + "\");'>" + set + "</div>";
-							}
-						});
-					html += "</div>";
-
-					html += "<div class='clearer'></div>";
-		html += "</div>";
-	});
-
-	el.innerHTML = html;
-}
-
 // https://stackoverflow.com/questions/1484506/random-color-generator
 function rainbow(numOfSteps, step) {
     // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
@@ -390,53 +353,7 @@ function rainbow(numOfSteps, step) {
     return (c);
 }
 
-//https://stackoverflow.com/questions/1484506/random-color-generator
-function getRandomColor() {
-  var letters = '0123456789ABCDEF';
-  var color = '#';
-  for (var i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
 
-  // return color;
-  return '#'+Math.floor(Math.random()*16777215).toString(16);
-}
-
-function getRandMoveValue() {
-	var plusOrMinus = Math.random() < 0.5 ? -1 : 1;
-
-	var max = 10;
-
-	var randIntA = Math.floor(Math.random() * Math.floor(max)) * plusOrMinus;
-	var randIntB = Math.floor(Math.random() * Math.floor(max)) * plusOrMinus;
-	var randIntC = Math.floor(Math.random() * Math.floor(max)) * plusOrMinus;
-
-	var initialPlacement = 7;
-	var moveValue = initialPlacement * randIntA +  randIntB * randIntC;
-
-	return moveValue;
-}
-
-
-//https://stackoverflow.com/a/2450976
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
-
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
-
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
-
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
 
 
 function getRandomInt(max) {
@@ -505,10 +422,6 @@ function focusOnPrevInput(id) {
 	nextEL.focus();
 }
 
-function adjustIDX(idx) {
-	
-}
-
 function getIdxFromInputID(id) {
 	var re = /answer_(\d+)/;
 	var results = id.match(re);
@@ -517,12 +430,37 @@ function getIdxFromInputID(id) {
 	return idx;
 }
 
-function setupProblemsForTypeAndSet(type, set) {
+function blurMain() {
+	var el = document.getElementById('mathContent');
+		el.innerHTML = "";
+		el.classList.add("blur");
+
+}
+
+function displayProblemSetPage(type, set) {
+	changeToBlackWhiteLogo();
+	showCloseButton();
+	showMessage();
+	// blurMain();
 
 	selectedType = type;
 	selectedSet = set;
 
-	var problems = getProblemsForTypeAndSet(type, set);
+	const problemSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);
+	const html = MM.htmlForTypeProblemSet(type, problemSet);
+	htmlToMain(html);
+
+	setSetLabel(set);
+	setupMaxVarsForSet(set);
+	displayReadySetGo();
+	focusOnFirstProblem();
+} 
+
+function setupProblemsForTypeAndSet(type, set) {
+	const problemSet = getProblemSetForTypeAndSet(typeSetData, type, set);
+	const html = htmlForProblemSet(problemSet);
+
+
 	outputProblems(type, problems);
 	setSetLabel(set);
 	setupMaxVarsForSet(set);
@@ -588,33 +526,6 @@ function hideScoreSheet() {
 		scoreSheetID.style.display = "none";
 }
 
-function outputProblems(type, problems) {
-	changeToBlackWhiteLogo();
-	showCloseButton();
-	showMessage();
-
-	var el = document.getElementById('mathContent');
-		el.innerHTML = "";
-
-		el.classList.add("blur");
-
-
-	var html = "";
-
-	selectedProblemData = shuffle(problems);
-
-	selectedProblemData.forEach( function (prob, i) {
-		html += htmlForType(type, prob, i);
-
-	});
-
-	html += "<div class='clearer'></div>";
-	el.innerHTML = html;
-
-
-
-	focusOnFirstProblem();
-}
 
 function htmlForType(type, prob, idx) {
 	var firstNum = prob[0];
@@ -686,18 +597,6 @@ function htmlForType(type, prob, idx) {
 	return html;
 }
 
-
-function getProblemsForTypeAndSet(type, set) {
-	var problems = data[type][set];
-
-	if (!problems) 
-		console.log("[ERROR] Could not find problems for " + type + " set: " + set);
-
-	return problems;
-}
-
-
-
 </script>
 
 
@@ -705,14 +604,14 @@ function getProblemsForTypeAndSet(type, set) {
 
 	<div id="scoreSheet">
 		<div id="scoreContent">
-		    <a href="#" onClick="outputSets();"><span>Back</span></a>
+		    <a href="#" onClick="displayMainPage();"><span>Back</span></a>
 
 		    <div id="scoreMessage">
 		    </div>
 
 			<div id="score">
 				<div id="numCorrect"></div>
-				<div id="passCheck" onClick="outputSets();">
+				<div id="passCheck" onClick="displayMainPage();">
 					<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
 						<circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
 						<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
@@ -726,7 +625,7 @@ function getProblemsForTypeAndSet(type, set) {
 	<div id="wrapper">
 		<div id="banner">
 			<!-- <div id="logo">MM</div> -->
-			<div id="logo" onClick="outputSets();">MAD<span id="logoSecond" class="logoLighter">MINUTES</span>
+			<div id="logo" onClick="displayMainPage();">MAD<span id="logoSecond" class="logoLighter">MINUTES</span>
 				<img id="zachSVG" src="zach-dinosaur.svg"></img>
 			</div>
 
@@ -735,7 +634,7 @@ function getProblemsForTypeAndSet(type, set) {
 			<!-- <div id="countDown">0:01</div> -->
 
 
-			<div id="home" onClick="outputSets();">
+			<div id="home" onClick="displayMainPage();">
 				<div id="setTitle"><span class="weakerFont">Set </span><span id="setLabel">A</span></div>
 				<div class="close-button"></div>
 				<!-- <div class="clearer"></div> -->
