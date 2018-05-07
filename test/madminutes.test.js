@@ -101,3 +101,32 @@ test('has html output for div problem set', () => {
     expect(m2.length).toBe(40);     // 40 x's
 });
 
+test('has html output for addition problem set', () => {
+    const type = MM.CONST.TYPE.ADD;/*?*/
+    const set = "H";
+    const probSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);/*?*/
+
+    const idx = 3;
+    const prob = probSet[idx];
+    const htmlIndividualProblem = MM.htmlIndividualProblemAddition(prob, idx);/*?*/
+    expect(htmlIndividualProblem).toEqual(expect.stringContaining("+")); // has multiplication "x" sign 
+    
+    const htmlMult = MM.htmlForTypeProblemSet(type, probSet);/*?*/
+    const m2 = htmlMult.match(/(\+)/g); /*?*/
+    expect(m2.length).toBe(40);     // 40 x's
+});
+
+test('has html output for subtraction problem set', () => {
+    const type = MM.CONST.TYPE.SUB;/*?*/
+    const set = "H";
+    const probSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);/*?*/
+
+    const idx = 3;
+    const prob = probSet[idx];
+    const htmlIndividualProblem = MM.htmlIndividualProblemSubtraction(prob, idx);/*?*/
+    expect(htmlIndividualProblem).toEqual(expect.stringContaining("-")); // has multiplication "x" sign 
+    
+    const htmlMult = MM.htmlForTypeProblemSet(type, probSet);/*?*/
+    const m2 = htmlMult.match(/\s(\-)\s/g); /*?*/
+    expect(m2.length).toBe(40);     // 40 x's
+});

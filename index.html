@@ -33,7 +33,9 @@
 	var numberCorrect = 0;
 
 	function setup() {
-		displayMainPage();
+		// displayMainPage();
+
+		displayProblemSetPage(MM.CONST.TYPE.SUB, "S");
 	}
 
 	document.addEventListener('keydown', function (e) {
@@ -550,7 +552,7 @@
 		showCloseButton();
 		showMessage();
 		/////////////// DEBUG /////////////////////////
-		blurMain();
+		// blurMain();
 		/////////////// DEBUG /////////////////////////
 
 		selectedType = type;

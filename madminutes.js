@@ -5,14 +5,14 @@
         TYPE: {
             MUL: "Multiplication",
             DIV: "Division",
-            SUB: "Subtraction",
             ADD: "Addition",
+            SUB: "Subtraction",
         },
         TYPE_CALCULATION: {
             "Multiplication": (a, b, z) => { return parseFloat(a) * parseFloat(b) === parseFloat(z) },
             "Division": (a, b, z) => { return parseFloat(a) / parseFloat(b) === parseFloat(z) },
-            "Subtraction": (a, b, z) => { return parseFloat(a) - parseFloat(b) === parseFloat(z) },
             "Addition": (a, b, z) => { return parseFloat(a) + parseFloat(b) === parseFloat(z) },
+            "Subtraction": (a, b, z) => { return parseFloat(a) - parseFloat(b) === parseFloat(z) },
         },
         ERRORS: {
             NO_TYPE_FOUND: "No Type found.",
@@ -147,6 +147,76 @@
         </div>`;
     };
 
+    exports.htmlIndividualProblemAddition = function (prob, idx) {
+        const firstNum = prob[0];
+        const secNum = prob[1];
+
+        const topVal = getRandMoveValue();
+        const rightVal = getRandMoveValue();
+        const bottomVal = getRandMoveValue();
+        const leftVal = getRandMoveValue();
+
+        return `<div class='mult' style='top:${topVal}em; right:${rightVal}em; bottom:${bottomVal}em; left:${leftVal}em;' >
+        <div class='top'>
+            <div class='rightSide'>
+                <div class='product productFirstNum'>
+                ${firstNum}
+                </div>
+                <div class='product productSecNum'>
+                ${secNum}
+                </div>
+            </div>
+            <div class='leftSide'>
+                <div class='symbol'>
+                    +
+                </div>
+            </div>
+            <div class='clearer'></div>
+        </div>
+        <div class='bottom'>
+            <div class='inputArea'>
+                <input type='text' class='answers' id='answer_${idx}' onKeyPress='validate(event);'></input>
+            </div>
+            <div class='clearer'></div>
+        </div>
+        </div>`;
+    }
+
+    exports.htmlIndividualProblemSubtraction = function (prob, idx) {
+        const firstNum = prob[0];
+        const secNum = prob[1];
+
+        const topVal = getRandMoveValue();
+        const rightVal = getRandMoveValue();
+        const bottomVal = getRandMoveValue();
+        const leftVal = getRandMoveValue();
+
+        return `<div class='mult' style='top:${topVal}em; right:${rightVal}em; bottom:${bottomVal}em; left:${leftVal}em;' >
+        <div class='top'>
+            <div class='rightSide'>
+                <div class='product productFirstNum'>
+                ${firstNum}
+                </div>
+                <div class='product productSecNum'>
+                ${secNum}
+                </div>
+            </div>
+            <div class='leftSide'>
+                <div class='symbol'>
+                    -
+                </div>
+            </div>
+            <div class='clearer'></div>
+        </div>
+        <div class='bottom'>
+            <div class='inputArea'>
+                <input type='text' class='answers' id='answer_${idx}' onKeyPress='validate(event);'></input>
+            </div>
+            <div class='clearer'></div>
+        </div>
+        </div>`;
+    }
+
     function getHtmlTypeFn(type) {
         switch (type) {/*?*/
             case exports.CONST.TYPE.MUL:/*?*/
@@ -155,7 +225,14 @@
             case exports.CONST.TYPE.DIV:/*?*/
                 return exports.htmlIndividualProblemDivision; /*?*/
                 break;
+            case exports.CONST.TYPE.ADD:/*?*/
+                return exports.htmlIndividualProblemAddition; /*?*/
+                break;
+            case exports.CONST.TYPE.SUB:/*?*/
+                return exports.htmlIndividualProblemSubtraction; /*?*/
+                break;
             default:
+                throw new Error("No HtmlTypeFn setup in the switch statement");
         }
     };
 
