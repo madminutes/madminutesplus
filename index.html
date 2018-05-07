@@ -87,6 +87,7 @@
 
 
 	function displayMainPage() {
+		removeMainBlur();
 		clearTimeouts();
 		changeToColorLogo();
 		hideCloseButton();
@@ -110,9 +111,7 @@
 		timeoutYellowLight = setTimeout(function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
 		timeoutGreenLight = setTimeout(function () {
 			outputReadySetGoMessage("Go", "greenLight");
-			var el = document.getElementById('mathContent');
-			el.classList.remove("blur");
-
+			removeMainBlur();
 
 			startCountDownMilliseconds();
 		}, 3000);
@@ -140,7 +139,8 @@
 			calculateScore();
 			return;
 		}
-
+		
+		m = m < 0 ? 0 : m;
 
 		var lcta = selectedMaxTime.split(/[:]+/);
 		var m_last = lcta[0];
@@ -161,7 +161,9 @@
 		// document.getElementById('countDown').innerHTML = m + ":" + s;
 
 		currentTime = m + ":" + s;
-		// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s + ":" + currentMilliseconds);
+
+		let per = toPercentage(percentageComplete);
+		console.log( per + " -- " + progress + " -- " + m + ":" + s + ":" + currentMilliseconds);
 
 		countDownTimeout = setTimeout(startCountDownMilliseconds, millisecondInc);
 	}
@@ -235,7 +237,7 @@
 		// push and then sort by time
 		// take out the top 3
 		highScoresCookie[type][set].push([time, accuracy]);
-		highScoresCookie[type][set].sort((a, b) => a[0] - b[0]);
+		highScoresCookie[type][set].sort((a, b) => a[0] - b[0] || b[1] - a[1]);
 
 		if (highScoresCookie[type][set].length > 3)
 			highScoresCookie[type][set] = highScoresCookie[type][set].slice(0, 3);
@@ -262,7 +264,7 @@
 		// push and then sort by time
 		// take out the top 3
 		highScoresCookie[type][set].push([time, accuracy]);
-		highScoresCookie[type][set].sort((a, b) => b[1] - a[1]);
+		highScoresCookie[type][set].sort((a, b) => b[1] - a[1] || a[0] - b[0]);
 
 		if (highScoresCookie[type][set].length > 3)
 			highScoresCookie[type][set] = highScoresCookie[type][set].slice(0, 3);
@@ -379,11 +381,19 @@
 			let accuracy = numberCorrect / problemSet.length;
 			console.log('Time Taken: ', msToTime(timeTaken));
 			console.log('Accuracy: ', accuracy);
+			setCurrentStats(timeTaken, accuracy);
+
 			insertStatsInCookieTimeTaken(selectedType, selectedSet, timeTaken, accuracy);
 			insertStatsInCookieAccuracy(selectedType, selectedSet, timeTaken, accuracy);
+
+			displayStats(selectedType, selectedSet);
 		} else {
 			var passCheckID = document.getElementById("passCheck");
 			passCheckID.style.display = "none";
+
+			document.getElementById('statsHeader').style.display = 'none';
+			document.getElementById('currentStats').style.display = 'none';
+			document.getElementById('stats').style.display = 'none';
 		}
 
 
@@ -394,6 +404,45 @@
 
 		var scoreSheetID = document.getElementById("scoreSheet");
 		scoreSheetID.style.display = "block";
+
+	}
+
+	function displayStats(selectedType, selectedSet) {
+		 document.getElementById('stats').style.display = 'flex';
+		 document.getElementById('statsHeader').style.display = 'block';
+		 document.getElementById('currentStats').style.display = 'block';
+
+		["highScoresTimeTaken", "highScoresAccuracy"].forEach((name) => {
+			const highScoresCookie = getCookie(name);
+			if (highScoresCookie) {
+				const highScoresHash = JSON.parse(atob(highScoresCookie));
+				if (highScoresHash[selectedType] && highScoresHash[selectedType][selectedSet]) {
+					const highScoresArr = highScoresHash[selectedType][selectedSet];
+					const el = document.getElementById(name);
+					let html = "";
+
+					highScoresArr.forEach((scoreArr, i) => {
+						const timeTaken = scoreArr[0];
+						const accuracy = scoreArr[1];
+
+						const timeTakenStr = msToTime(timeTaken);
+						const perCorrect = toPercentage(accuracy);
+						html += `<div class='topItem'>`;
+						html += `<div class='topNum'>${i + 1}</div>`;
+						html += `<div class='topTimeTaken'>${timeTakenStr}</div>`;
+						html += `<div class='topAccuracy'>${perCorrect}</div>`;
+						html += `</div>`;
+					})
+
+					el.innerHTML = html;
+				}
+			}
+		});
+	}
+
+	function setCurrentStats(timeTaken, accuracy) {
+		let el = document.getElementById('currentStats');
+		el.innerHTML = "You passed in " + msToTime(timeTaken) + " with a " + toPercentage(accuracy) + " of questions answered correctly.";
 	}
 
 	function outputReadySetGoMessage(message, cssClass) {
@@ -408,6 +457,9 @@
 	function setSetLabel(label) {
 		var el = document.getElementById('setLabel');
 		el.innerHTML = label;
+
+		var elB = document.getElementById('setLabelStats');
+		elB.innerHTML = label;
 	}
 
 	function htmlCollectionInputValuesToArr(htmlColl) {
@@ -487,7 +539,11 @@
 		var el = document.getElementById('mathContent');
 		el.innerHTML = "";
 		el.classList.add("blur");
+	}
 
+	function removeMainBlur() {
+		var el = document.getElementById('mathContent');
+			el.classList.remove("blur");
 	}
 
 	function displayProblemSetPage(type, set) {
@@ -560,7 +616,6 @@
 		zachSVG.classList.remove("zachSVGBW")
 
 		zachSVG.style.clipPath = "unset";
-
 	}
 
 	function showCloseButton() {
@@ -611,6 +666,19 @@
 						<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
 					</svg>
 				</div>
+			</div>
+		</div>
+		<div id="statsHeader">Current Stats for Set <span id="setLabelStats"></span>
+		</div>
+		<div id="currentStats"></div>
+		<div id="stats">
+			<div class="topGroup">
+				<div class="topHeader">Top Three for Speed</div>
+				<div id="highScoresTimeTaken"></div>
+			</div>
+			<div class="topGroup">
+				<div class="topHeader">Top Three for Percentage Correct</div>
+				<div id="highScoresAccuracy"></div>
 			</div>
 		</div>
 	</div>

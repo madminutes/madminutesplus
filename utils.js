@@ -3,6 +3,9 @@ function getRandomInt(max) {
     return Math.floor(Math.random() * Math.floor(max));
 }
 
+function toPercentage(num) {
+    return (num * 100).toFixed(1) + '%';
+}
 
 
 // http://mcgivery.com/htmlelement-pseudostyle-settingmodifying-before-and-after-in-javascript/
@@ -97,7 +100,7 @@ function msToTime(s) {
     var mins = s % 60;
     var hrs = (s - mins) / 60;
 
-    return mins + ' mins' + " and " + secs + '.' + ms + " secs";
+    return mins + 'mins' + " " + secs + '.' + ms + "secs";
 }
 
 
@@ -124,3 +127,4 @@ function getCookie(name) {
 function eraseCookie(name) {
     document.cookie = name + '=; Max-Age=-99999999;';
 }
+

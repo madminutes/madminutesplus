@@ -494,7 +494,88 @@ body {
 }
 
 
+#stats {
+    background: #ffe1d9;
+    height: 10em;
+    color: #458800;
+    display: flex;
+    flex-flow: row;
+}
 
+#statsHeader {
+    text-align: center;
+    font-size: 140%;
+    background: #ffe1d9;
+    color: #458800;
+    font-weight: bold;
+    height: 1em;
+    padding-top: 1em;
+}
+
+#currentStats {
+    color: black;
+    /* font-size: 120%; */
+    font-size: 140%;
+    text-align: center;
+    background: #ffe1d9;
+    font-weight: bold;
+    padding-top: 1em;
+    font-family: monospace;
+    padding-bottom: 1em;
+}
+
+#highScoresTimeTaken, #highScoresAccuracy {
+    display: flex;
+    flex-flow: column;
+    height: 100%;
+}
+
+.topItem {
+    display: flex;
+    flex-flow: row;
+    width: 100%;
+    color: black;
+    font-size: 120%;
+    font-family: monospace;
+}
+
+.topNum {
+    width: 1em;
+    text-align: right;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.topTimeTaken {
+    width: 10em;
+    text-align: right;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.topAccuracy {
+    width: 2em;
+    text-align: right;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+.topGroup {
+    padding: 1em;
+    /* border: 1px solid black; */
+    display: flex;
+    flex-flow: column;
+    width: 50%;
+    align-items: center;
+}
+
+.topHeader {
+    /* border: 1px solid red; */
+    text-align: center;
+    font-size: 120%;
+    font-weight: bold;
+    padding-bottom: 0.5em;
+}
 
 #scoreContent {
     margin-left: 1em;
