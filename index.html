@@ -37,9 +37,14 @@
 
 		// displayMainPage();
 		// displayProblemSetPage(MM.CONST.TYPE.MUL, "K");
-		displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
 
-		fillInAnswers();
+/////////////// DEBUG /////////////////////////
+		displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
+		fillInAnswers(true, selectedProblemData, (a,b)=> {return a/b});
+		// fillInAnswers(false);
+		var spaceKey = 32;
+		simulateKeydown(spaceKey);
+/////////////// DEBUG /////////////////////////
 	}
 
 	document.addEventListener('keydown', function (e) {
@@ -50,6 +55,7 @@
 		var delKey = 8;
 		var enterKey = 13;
 		var spaceKey = 32;
+		var tabKey = 9;
 		// console.log('keydown:' + e.keyCode);
 
 		var el = e.target;
@@ -61,31 +67,17 @@
 			return false;
 		}
 
-		if (e.keyCode == enterKey) {
+		if ([enterKey, spaceKey, tabKey, rightArrowKey, upArrowKey].includes(e.keyCode)) {
 			e.preventDefault();
 			checkForCompletion(focusOnNextInput(id));
 			return false;
 		}
 
-		if (e.keyCode == spaceKey) {
+		if ([leftArrowKey, dnArrowKey].includes(e.keyCode)) {
 			e.preventDefault();
-			checkForCompletion(focusOnNextInput(id));
+			checkForCompletion(focusOnPrevInput(id));
 			return false;
 		}
-
-		// if key is an arrow key, don't type the user
-		// input. 
-		if (e.keyCode > 36 && e.keyCode < 41) {
-			e.preventDefault();
-
-			if (e.keyCode == rightArrowKey || e.keyCode == upArrowKey)
-				checkForCompletion(focusOnNextInput(id));
-			if (e.keyCode == leftArrowKey || e.keyCode == dnArrowKey)
-				checkForCompletion(focusOnPrevInput(id));
-
-			return false;
-		}
-
 	});
 
 
@@ -293,7 +285,7 @@
 
 
 	function displayScoring() {
-		var scoreMessageArray = tryAgainMessages;
+		var scoreMessageArray = CONFIG.tryAgainMessages;
 
 		var numCorrectID = document.getElementById("numCorrect");
 		numCorrectID.innerHTML = "+" + numberCorrect;
@@ -302,14 +294,14 @@
 			var passCheckID = document.getElementById("passCheck");
 			passCheckID.style.display = "block";
 
-			scoreMessageArray = passedMessages;
+			scoreMessageArray = CONFIG.passedMessages;
 		} else {
 			var passCheckID = document.getElementById("passCheck");
 			passCheckID.style.display = "none";
 		}
 
 
-		var randomInt = MM.getRandomInt(scoreMessageArray.length);
+		var randomInt = getRandomInt(scoreMessageArray.length);
 		var message = scoreMessageArray[randomInt];
 		var scoreMessageID = document.getElementById("scoreMessage");
 		scoreMessageID.innerHTML = message;
@@ -332,7 +324,13 @@
 		el.innerHTML = label;
 	}
 
-
+	function htmlCollectionInputValuesToArr(htmlColl) {
+		let arr = [];
+		iterateCollection(probs)((p, i) => {
+			arr.push(p.value);
+		});
+		return arr;
+	}
 
 	function checkForCompletion(cb) {
 		// if all inputs have been filled, then score the answers
@@ -342,11 +340,13 @@
 
 		let inputsFilledCorrectly = true;
 		iterateCollection(probs)((p, i) => {
-			if (isNumeric(p.value) == false)
+			if (isNumeric(p.value) == false) {
+				p.classList.add("checkAnswer");
 				inputsFilledCorrectly = false
+			}
 		});
 
-		if (inputsFilledCorrectly) 
+		if (inputsFilledCorrectly)
 			calculateScore();
 		else
 			cb
@@ -358,19 +358,23 @@
 	}
 
 	function focusOnNextInput(id) {
-		var idx = getIdxFromInputID(id);
-		var incremented = parseInt(idx) + 1;
+		if (id) {
+			var idx = getIdxFromInputID(id);
+			var incremented = parseInt(idx) + 1;
 
-		var nextEL = document.getElementById("answer_" + incremented);
-		nextEL.focus();
+			var nextEL = document.getElementById("answer_" + incremented);
+			nextEL.focus();
+		}
 	}
 
 	function focusOnPrevInput(id) {
-		var idx = getIdxFromInputID(id);
-		var decremented = parseInt(idx) - 1;
+		if (id) {
+			var idx = getIdxFromInputID(id);
+			var decremented = parseInt(idx) - 1;
 
-		var nextEL = document.getElementById("answer_" + decremented);
-		nextEL.focus();
+			var nextEL = document.getElementById("answer_" + decremented);
+			nextEL.focus();
+		}
 	}
 
 	function getIdxFromInputID(id) {
@@ -392,19 +396,28 @@
 		changeToBlackWhiteLogo();
 		showCloseButton();
 		showMessage();
+/////////////// DEBUG /////////////////////////
 		// blurMain();
+/////////////// DEBUG /////////////////////////
 
 		selectedType = type;
 		selectedSet = set;
 
 		const problemSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);
-		const html = MM.htmlForTypeProblemSet(type, problemSet);
+		const shuffledProblemSet = setupShuffledProblemSet(problemSet);
+		const html = MM.htmlForTypeProblemSet(type, shuffledProblemSet);
 		htmlToMain(html);
 
 		setSetLabel(set);
 		setupMaxVarsForSet(set);
 		displayReadySetGo();
 		focusOnFirstProblem();
+	}
+
+	function setupShuffledProblemSet(problemSet) {
+		const shuffledProbs = shuffle(problemSet);
+		selectedProblemData = shuffledProbs;
+		return shuffledProbs;
 	}
 
 	function setupProblemsForTypeAndSet(type, set) {

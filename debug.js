@@ -1,19 +1,26 @@
-function fillInAnswers() {
+function fillInAnswers(isAllCorrect = true, problemSet, calcFn) {
     const className = "answers";
     const probs = document.getElementsByClassName(className);
 
     iterateCollection(probs)((p, i) => {
-        const randAnswer = getRandomInt(10);
+        let randAnswer = null;
+        if (isAllCorrect == false) {
+            randAnswer = getRandomInt(10);
+        } else {
+            const prob = problemSet[i];
+            const a = prob[0];
+            const b = prob[1];
+
+            randAnswer = calcFn(a,b);
+        }
         p.value = randAnswer;
     });
 
 }
 
-
-function iterateCollection (collection) {
-    return function(f) {
-      for(var i = 0; collection[i]; i++) {
-        f(collection[i], i);
-      }
-    }
-  }
+function simulateKeydown(keycode, isCtrl=false, isAlt=false, isShift=false) {
+    var e = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, char: String.fromCharCode(keycode), key: String.fromCharCode(keycode), shiftKey: isShift, ctrlKey: isCtrl, altKey: isAlt });
+    Object.defineProperty(e, 'keyCode', { get: function () { return this.keyCodeVal; } });
+    e.keyCodeVal = keycode;
+    document.dispatchEvent(e);
+}

@@ -160,12 +160,9 @@
     };
 
     exports.htmlForTypeProblemSet = function (type, problemSet) {
-        type
-        problemSet
         const htmlTypeFn = getHtmlTypeFn(type); //?
 
-        const shuffledProbs = shuffle(problemSet);
-        return shuffledProbs.reduce((html, prob, i) => {
+        return problemSet.reduce((html, prob, i) => {
             html += htmlTypeFn(prob, i);
             return html;
         }, "");
