@@ -8,118 +8,123 @@
 	<link href="madminutes.css" rel="stylesheet">
 	<script src="madminutes.js"></script>
 	<script src="config.js"></script>
+	<script src="utils.js"></script>
+
+	<script src="debug.js"></script>
 </head>
 
 
 <script>
-const typeSetData = CONFIG.data;
-var timeoutA = null;
-var timeoutB = null;
+	const typeSetData = CONFIG.data;
+	var timeoutA = null;
+	var timeoutB = null;
 
-var countDownTimeout = null;
+	var countDownTimeout = null;
 
-var currentTime = null;
+	var currentTime = null;
 
-var selectedType = null;
-var selectedSet = null;
-var selectedProblemData = null;  // randomized problems can go here. 
-var selectedMaxPass = null;
-var selectedMaxTime = null;
-var numberCorrect = 0;
+	var selectedType = null;
+	var selectedSet = null;
+	var selectedProblemData = null;  // randomized problems can go here. 
+	var selectedMaxPass = null;
+	var selectedMaxTime = null;
+	var numberCorrect = 0;
 
-
-document.addEventListener('keydown', function(e) {
-	var leftArrowKey = 37;
-	var rightArrowKey = 39;
-	var upArrowKey = 38;
-	var dnArrowKey = 40;
-	var delKey = 8;
-	var enterKey = 13;
-	var spaceKey = 32;
-    // console.log('keydown:' + e.keyCode);
-
-    var el = e.target;
-    var id = el.id;
-
-    if (e.keyCode == delKey) {
-    	e.preventDefault();
-    	el.value = "";	
-        return false;
-    }
-
-    if (e.keyCode == enterKey) {
-    	e.preventDefault();
-		focusOnNextInput(id);
-        return false;
-    }
-
-    if (e.keyCode == spaceKey) {
-    	e.preventDefault();
-		focusOnNextInput(id);
-        return false;
-    }
-
-    // if key is an arrow key, don't type the user
-    // input. 
-    if (e.keyCode > 36 && e.keyCode < 41) {
-    	e.preventDefault();
-
-    	if (e.keyCode == rightArrowKey || e.keyCode == upArrowKey)
-    		focusOnNextInput(id);
-    	if (e.keyCode == leftArrowKey || e.keyCode == dnArrowKey)
-    		focusOnPrevInput(id);
-
-        return false;
-    }
-
-});
+	function setup() {
+		// var el = document.getElementById('foo');
+		// el.innerHTML = 'Hello World!';
 
 
-// was going to make if the user clicks anywhere with the mouse
-// focus will be automatically placed in the last empty input 
-document.addEventListener('click', function(event) { 
-    // if(!$(event.target).closest('#menucontainer').length) {
-    //     if($('#menucontainer').is(":visible")) {
-    //         $('#menucontainer').hide();
-    //     }
-    // }        
-    // console.log("clicky clicky");
-});
+		// displayMainPage();
+		// displayProblemSetPage(MM.CONST.TYPE.MUL, "K");
+		displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
+
+		fillInAnswers();
+	}
+
+	document.addEventListener('keydown', function (e) {
+		var leftArrowKey = 37;
+		var rightArrowKey = 39;
+		var upArrowKey = 38;
+		var dnArrowKey = 40;
+		var delKey = 8;
+		var enterKey = 13;
+		var spaceKey = 32;
+		// console.log('keydown:' + e.keyCode);
+
+		var el = e.target;
+		var id = el.id;
+
+		if (e.keyCode == delKey) {
+			e.preventDefault();
+			el.value = "";
+			return false;
+		}
+
+		if (e.keyCode == enterKey) {
+			e.preventDefault();
+			checkForCompletion(focusOnNextInput(id));
+			return false;
+		}
+
+		if (e.keyCode == spaceKey) {
+			e.preventDefault();
+			checkForCompletion(focusOnNextInput(id));
+			return false;
+		}
+
+		// if key is an arrow key, don't type the user
+		// input. 
+		if (e.keyCode > 36 && e.keyCode < 41) {
+			e.preventDefault();
+
+			if (e.keyCode == rightArrowKey || e.keyCode == upArrowKey)
+				checkForCompletion(focusOnNextInput(id));
+			if (e.keyCode == leftArrowKey || e.keyCode == dnArrowKey)
+				checkForCompletion(focusOnPrevInput(id));
+
+			return false;
+		}
+
+	});
+
+
+	// was going to make if the user clicks anywhere with the mouse
+	// focus will be automatically placed in the last empty input 
+	document.addEventListener('click', function (event) {
+		// if(!$(event.target).closest('#menucontainer').length) {
+		//     if($('#menucontainer').is(":visible")) {
+		//         $('#menucontainer').hide();
+		//     }
+		// }        
+		// console.log("clicky clicky");
+	});
 
 
 
 
-function setup() {
-	// var el = document.getElementById('foo');
-	// el.innerHTML = 'Hello World!';
 
+	function displayMainPage() {
+		clearTimeouts();
+		changeToColorLogo();
+		hideCloseButton();
+		hideMessage();
+		hideScoreSheet();
 
-	// displayMainPage();
-	// displayProblemSetPage(MM.CONST.TYPE.MUL, "K");
-	displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
-}
+		const html = MM.htmlForTypeSetData(typeSetData);
+		htmlToMain(html);
+	}
 
-function displayMainPage() {
-	clearTimeouts();
-	changeToColorLogo();
-	hideCloseButton();
-	hideMessage();
-	hideScoreSheet();
+	function htmlToDiv(id, html) {
+		var el = document.getElementById(id);
+		el.innerHTML = html;
+	}
+	function htmlToMain(html) { htmlToDiv("mathContent", html); }
 
-	const html = MM.htmlForTypeSetData(typeSetData); 
-	htmlToMain(html);
-}
-
-function htmlToDiv(id,html) {
-	var el = document.getElementById(id);
-	el.innerHTML = html;
-}
-function htmlToMain(html) { htmlToDiv("mathContent", html); }
-
-function displayReadySetGo() {
-	outputReadySetGoMessage("Ready", "redLight");
-	timeoutA = setTimeout( function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
-	timeoutB = setTimeout( function () { 
+	function displayReadySetGo() {
+		outputReadySetGoMessage("Ready", "redLight");
+		timeoutA = setTimeout(function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
+		timeoutB = setTimeout(function () {
 			outputReadySetGoMessage("Go", "greenLight");
 			var el = document.getElementById('mathContent');
 			el.classList.remove("blur");
@@ -129,473 +134,349 @@ function displayReadySetGo() {
 		}, 3000);
 
 		// calculateScore();
-}
-
-
-
-// from https://codepen.io/ishanbakshi/pen/pgzNMv
-function startCountDown() {
-	// var presentTime = document.getElementById('countDown').innerHTML;
-	var timeArray = currentTime.split(/[:]+/);
-	var m = timeArray[0];
-	var s = checkSecond((timeArray[1] - 1));
-	if(s==59){m=m-1}
-
-	if(m<0) {
-		console.log('timer completed')
-		calculateScore();
-		return; 
 	}
 
 
-	var lcta = selectedMaxTime.split(/[:]+/);
-	var m_last = lcta[0];
-	var s_last = lcta[1];
-	var lastCurrentSetTimeTotalSeconds = parseInt(m_last) * 60 + parseInt(s_last);
-	var currentTimeTotalSeconds = parseInt(m) * 60 + parseInt(s);
-	var percentageComplete = currentTimeTotalSeconds / lastCurrentSetTimeTotalSeconds;
 
-	var maxClip = 48; // pixels
-	var startFaster = 0; // start 12 pixels in
+	// from https://codepen.io/ishanbakshi/pen/pgzNMv
+	function startCountDown() {
+		// var presentTime = document.getElementById('countDown').innerHTML;
+		var timeArray = currentTime.split(/[:]+/);
+		var m = timeArray[0];
+		var s = checkSecond((timeArray[1] - 1));
+		if (s == 59) { m = m - 1 }
 
-	var progress = maxClip * (1 - percentageComplete) + startFaster;
+		if (m < 0) {
+			console.log('timer completed')
+			calculateScore();
+			return;
+		}
+
+
+		var lcta = selectedMaxTime.split(/[:]+/);
+		var m_last = lcta[0];
+		var s_last = lcta[1];
+		var lastCurrentSetTimeTotalSeconds = parseInt(m_last) * 60 + parseInt(s_last);
+		var currentTimeTotalSeconds = parseInt(m) * 60 + parseInt(s);
+		var percentageComplete = currentTimeTotalSeconds / lastCurrentSetTimeTotalSeconds;
+
+		var maxClip = 48; // pixels
+		var startFaster = 0; // start 12 pixels in
+
+		var progress = maxClip * (1 - percentageComplete) + startFaster;
 		progress = Math.ceil(progress);
 
-	var svgID = document.getElementById('zachSVG');
-	svgID.style.clipPath = "circle(" + progress + "px at 0 0px)";
+		var svgID = document.getElementById('zachSVG');
+		svgID.style.clipPath = "circle(" + progress + "px at 0 0px)";
 
-	// document.getElementById('countDown').innerHTML = m + ":" + s;
-	currentTime = m + ":" + s;
-	// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
+		// document.getElementById('countDown').innerHTML = m + ":" + s;
+		currentTime = m + ":" + s;
+		// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s);
 
-	countDownTimeout = setTimeout(startCountDown, 1000);
-}
+		countDownTimeout = setTimeout(startCountDown, 1000);
+	}
 
-function checkSecond(sec) {
-  if (sec < 10 && sec >= 0) {sec = "0" + sec}; // add zero in front of numbers < 10
-  if (sec < 0) {sec = "59"};
-  return sec;
-}
+	function checkSecond(sec) {
+		if (sec < 10 && sec >= 0) { sec = "0" + sec }; // add zero in front of numbers < 10
+		if (sec < 0) { sec = "59" };
+		return sec;
+	}
 
-function clearTimeouts() {
-	if (timeoutA)
-		clearTimeout(timeoutA);
-	if (timeoutB)
-		clearTimeout(timeoutB);
-	if (countDownTimeout)
-		clearTimeout(countDownTimeout);
-}
+	function clearTimeouts() {
+		if (timeoutA)
+			clearTimeout(timeoutA);
+		if (timeoutB)
+			clearTimeout(timeoutB);
+		if (countDownTimeout)
+			clearTimeout(countDownTimeout);
+	}
 
-function calculateScore() {
-	clearTimeouts();
+	function calculateScore() {
+		clearTimeouts();
 
-	console.log("Calculating score.");	
-	var el = document.getElementById('scoreSheet');
+		console.log("Calculating score.");
+		var el = document.getElementById('scoreSheet');
 		el.classList.add("scoreSheetSlide");
 
-	numberCorrect = 0; // reset this
+		numberCorrect = 0; // reset this
 
-	checkNumberCorrect(selectedType);
+		checkNumberCorrect(selectedType);
 
-	displayScoring();
+		displayScoring();
 
-	// pass , try again
-	// # total 
-	// # correct
-	// # wrong
-	// accuracy
-	// spark charts?? 
-	// 
-	// fix the # wrong and you get... something... +1 second next time for every corrected up to 5
-	// fix it all and you get statistics. 
-	//  
-	// previous high scores tally per set
-
-
-	// save set score for last 5 per set.
-	// save set score for top 5 per set (most completed problems)
-	// when accomplished. 
-	// 
-}
+		// pass , try again
+		// # total 
+		// # correct
+		// # wrong
+		// accuracy
+		// spark charts?? 
+		// 
+		// fix the # wrong and you get... something... +1 second next time for every corrected up to 5
+		// fix it all and you get statistics. 
+		//  
+		// previous high scores tally per set
 
 
-function setupMaxVarsForSet(set) {
-	var match = set.match(/50/);
-	if (match) {
-		selectedMaxTime = CONFIG.maxTime50;
-		currentTime = selectedMaxTime;
-		selectedMaxPass = CONFIG.maxPass50;
+		// save set score for last 5 per set.
+		// save set score for top 5 per set (most completed problems)
+		// when accomplished. 
+		// 
 	}
-	else {
-		selectedMaxTime = CONFIG.maxTime;
-		currentTime = selectedMaxTime;
-		selectedMaxPass = CONFIG.maxPass;
-	}
-}
 
-function checkNumberCorrect(type) {
 
-	selectedProblemData.forEach( function(prob, i) {
-		// go through each problem and check the input answer with calculated one
-		// if it's wrong, then highlight the wrong answer in red. 
-
-		var firstNum = prob[0];
-		var secNum = prob[1];
-		var calculatedAnswer = null;
-
-		switch (type) {
-			case "Multiplication":
-				calculatedAnswer = firstNum * secNum;
-				break;
-			case "Division":
-				calculatedAnswer = firstNum / secNum;
-				break;
-			default:
+	function setupMaxVarsForSet(set) {
+		var match = set.match(/50/);
+		if (match) {
+			selectedMaxTime = CONFIG.maxTime50;
+			currentTime = selectedMaxTime;
+			selectedMaxPass = CONFIG.maxPass50;
 		}
+		else {
+			selectedMaxTime = CONFIG.maxTime;
+			currentTime = selectedMaxTime;
+			selectedMaxPass = CONFIG.maxPass;
+		}
+	}
+
+	function checkNumberCorrect(type) {
+		selectedProblemData.forEach(function (prob, i) {
+			// go through each problem and check the input answer with calculated one
+			// if it's wrong, then highlight the wrong answer in red. 
+
+			var firstNum = prob[0];
+			var secNum = prob[1];
+			var calculatedAnswer = null;
+
+			switch (type) {
+				case "Multiplication":
+					calculatedAnswer = firstNum * secNum;
+					break;
+				case "Division":
+					calculatedAnswer = firstNum / secNum;
+					break;
+				default:
+			}
 
 
-		// console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
+			// console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
 
-		var answerInputID = document.getElementById("answer_" + i);
-		if (answerInputID.value != "") {
+			var answerInputID = document.getElementById("answer_" + i);
+			if (answerInputID.value != "") {
 
-			// if any input changes on wrong problems, then we can change the class to correct
-			answerInputID.addEventListener('input', function (evt) {
-				// console.log(this);
+				// if any input changes on wrong problems, then we can change the class to correct
+				answerInputID.addEventListener('input', function (evt) {
+					// console.log(this);
 
-				var studentAnswer = this.value
+					var studentAnswer = this.value
 
-				var idx = getIdxFromInputID(this.id);
-				var prob = selectedProblemData[idx];
-				var firstNum = prob[0];
-				var secNum = prob[1];
+					var idx = getIdxFromInputID(this.id);
+					var prob = selectedProblemData[idx];
+					var firstNum = prob[0];
+					var secNum = prob[1];
 
-				if (calculatedAnswer == studentAnswer)	{
-					answerInputID.classList.remove("checkAnswer");
-					answerInputID.classList.add("correctedAnswer");
+					if (calculatedAnswer == studentAnswer) {
+						answerInputID.classList.remove("checkAnswer");
+						answerInputID.classList.add("correctedAnswer");
+					}
+				});
+
+				var studentAnswer = parseFloat(answerInputID.value);
+				if (calculatedAnswer != studentAnswer) {
+					answerInputID.classList.add("checkAnswer");
 				}
-			});
-
-			var studentAnswer = parseFloat(answerInputID.value);
-			if (calculatedAnswer != studentAnswer)	{
-				answerInputID.classList.add("checkAnswer");
+				else {
+					numberCorrect++;
+				}
 			}
-			else {
-				numberCorrect++;
-			}
-		}
-	});
-
-
-
-}
-
-
-function displayScoring() {
-			var scoreMessageArray = tryAgainMessages;
-
-			var numCorrectID = 	document.getElementById("numCorrect");
-			numCorrectID.innerHTML = "+" + numberCorrect;
-
-			if (numberCorrect >= selectedMaxPass) {
-				var passCheckID = 	document.getElementById("passCheck");
-				passCheckID.style.display = "block";
-
-				scoreMessageArray = passedMessages;
-			} else {
-				var passCheckID = 	document.getElementById("passCheck");
-				passCheckID.style.display = "none";
-			}
-
-
-			var randomInt = getRandomInt(scoreMessageArray.length);
-			var message = scoreMessageArray[randomInt];
-			var scoreMessageID = 	document.getElementById("scoreMessage");
-			scoreMessageID.innerHTML = message;
-
-			var scoreSheetID = 	document.getElementById("scoreSheet");
-				scoreSheetID.style.display = "block";
-}
-
-function outputReadySetGoMessage(message, cssClass) {
-	var el = document.getElementById('message');
-	el.innerHTML = "";
-
-	var html = "<div id='readySetGoWrapper' class='lightSpeedOut animated " + cssClass + "'><div id='readySetGoMessage'>" + message + "</div></div>";
-
-	el.innerHTML = html;
-}
-
-function setSetLabel(label) {
-	var el = document.getElementById('setLabel');
-		el.innerHTML = label;
-}
-
-// https://stackoverflow.com/questions/1484506/random-color-generator
-function rainbow(numOfSteps, step) {
-    // This function generates vibrant, "evenly spaced" colours (i.e. no clustering). This is ideal for creating easily distinguishable vibrant markers in Google Maps and other apps.
-    // Adam Cole, 2011-Sept-14
-    // HSV to RBG adapted from: http://mjijackson.com/2008/02/rgb-to-hsl-and-rgb-to-hsv-color-model-conversion-algorithms-in-javascript
-    var r, g, b;
-    var h = step / numOfSteps;
-    var i = ~~(h * 6);
-    var f = h * 6 - i;
-    var q = 1 - f;
-    switch(i % 6){
-        case 0: r = 1; g = f; b = 0; break;
-        case 1: r = q; g = 1; b = 0; break;
-        case 2: r = 0; g = 1; b = f; break;
-        case 3: r = 0; g = q; b = 1; break;
-        case 4: r = f; g = 0; b = 1; break;
-        case 5: r = 1; g = 0; b = q; break;
-    }
-    var c = "#" + ("00" + (~ ~(r * 255)).toString(16)).slice(-2) + ("00" + (~ ~(g * 255)).toString(16)).slice(-2) + ("00" + (~ ~(b * 255)).toString(16)).slice(-2);
-    return (c);
-}
-
-
-
-
-function getRandomInt(max) {
-  return Math.floor(Math.random() * Math.floor(max));
-}
-
-
-
-// http://mcgivery.com/htmlelement-pseudostyle-settingmodifying-before-and-after-in-javascript/
-var UID = {
-	_current: 0,
-	getNew: function(){
-		this._current++;
-		return this._current;
+		});
 	}
-};
-
-HTMLElement.prototype.pseudoStyle = function(element,prop,value){
-	var _this = this;
-	var _sheetId = "pseudoStyles";
-	var _head = document.head || document.getElementsByTagName('head')[0];
-	var _sheet = document.getElementById(_sheetId) || document.createElement('style');
-	_sheet.id = _sheetId;
-	var className = "pseudoStyle" + UID.getNew();
-	
-	_this.className +=  " "+className; 
-	
-	_sheet.innerHTML += " ."+className+":"+element+"{"+prop+":"+value+"}";
-	_head.appendChild(_sheet);
-	return this;
-};
 
 
+	function displayScoring() {
+		var scoreMessageArray = tryAgainMessages;
 
-// https://stackoverflow.com/questions/469357/html-text-input-allows-only-numeric-input
-function validate(evt) {
-  var theEvent = evt || window.event;
-  var key = theEvent.keyCode || theEvent.which;
-  key = String.fromCharCode( key );
-  var regex = /[0-9]|\./;
-  if( !regex.test(key) ) {
-    theEvent.returnValue = false;
-    if(theEvent.preventDefault) theEvent.preventDefault();
-  }
-}
+		var numCorrectID = document.getElementById("numCorrect");
+		numCorrectID.innerHTML = "+" + numberCorrect;
+
+		if (numberCorrect >= selectedMaxPass) {
+			var passCheckID = document.getElementById("passCheck");
+			passCheckID.style.display = "block";
+
+			scoreMessageArray = passedMessages;
+		} else {
+			var passCheckID = document.getElementById("passCheck");
+			passCheckID.style.display = "none";
+		}
 
 
-function focusOnFirstProblem() {
-	var firstProb = document.getElementById("answer_0");
-	firstProb.focus();
-}
+		var randomInt = MM.getRandomInt(scoreMessageArray.length);
+		var message = scoreMessageArray[randomInt];
+		var scoreMessageID = document.getElementById("scoreMessage");
+		scoreMessageID.innerHTML = message;
 
-function focusOnNextInput(id) {
-	var idx = getIdxFromInputID(id);
-	var incremented = parseInt(idx) + 1; 
+		var scoreSheetID = document.getElementById("scoreSheet");
+		scoreSheetID.style.display = "block";
+	}
 
-	var nextEL = document.getElementById("answer_" + incremented);
-	nextEL.focus();
-}
+	function outputReadySetGoMessage(message, cssClass) {
+		var el = document.getElementById('message');
+		el.innerHTML = "";
 
-function focusOnPrevInput(id) {
-	var idx = getIdxFromInputID(id);
-	var decremented = parseInt(idx) - 1; 
+		var html = "<div id='readySetGoWrapper' class='lightSpeedOut animated " + cssClass + "'><div id='readySetGoMessage'>" + message + "</div></div>";
 
-	var nextEL = document.getElementById("answer_" + decremented);
-	nextEL.focus();
-}
+		el.innerHTML = html;
+	}
 
-function getIdxFromInputID(id) {
-	var re = /answer_(\d+)/;
-	var results = id.match(re);
+	function setSetLabel(label) {
+		var el = document.getElementById('setLabel');
+		el.innerHTML = label;
+	}
 
-	var idx = results[1];
-	return idx;
-}
 
-function blurMain() {
-	var el = document.getElementById('mathContent');
+
+	function checkForCompletion(cb) {
+		// if all inputs have been filled, then score the answers
+		// otherwise run the cb
+		const className = "answers";
+		const probs = document.getElementsByClassName(className);
+
+		let inputsFilledCorrectly = true;
+		iterateCollection(probs)((p, i) => {
+			if (isNumeric(p.value) == false)
+				inputsFilledCorrectly = false
+		});
+
+		if (inputsFilledCorrectly) 
+			calculateScore();
+		else
+			cb
+	}
+
+	function focusOnFirstProblem() {
+		var firstProb = document.getElementById("answer_0");
+		firstProb.focus();
+	}
+
+	function focusOnNextInput(id) {
+		var idx = getIdxFromInputID(id);
+		var incremented = parseInt(idx) + 1;
+
+		var nextEL = document.getElementById("answer_" + incremented);
+		nextEL.focus();
+	}
+
+	function focusOnPrevInput(id) {
+		var idx = getIdxFromInputID(id);
+		var decremented = parseInt(idx) - 1;
+
+		var nextEL = document.getElementById("answer_" + decremented);
+		nextEL.focus();
+	}
+
+	function getIdxFromInputID(id) {
+		var re = /answer_(\d+)/;
+		var results = id.match(re);
+
+		var idx = results[1];
+		return idx;
+	}
+
+	function blurMain() {
+		var el = document.getElementById('mathContent');
 		el.innerHTML = "";
 		el.classList.add("blur");
 
-}
-
-function displayProblemSetPage(type, set) {
-	changeToBlackWhiteLogo();
-	showCloseButton();
-	showMessage();
-	// blurMain();
-
-	selectedType = type;
-	selectedSet = set;
-
-	const problemSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);
-	const html = MM.htmlForTypeProblemSet(type, problemSet);
-	htmlToMain(html);
-
-	setSetLabel(set);
-	setupMaxVarsForSet(set);
-	displayReadySetGo();
-	focusOnFirstProblem();
-} 
-
-function setupProblemsForTypeAndSet(type, set) {
-	const problemSet = getProblemSetForTypeAndSet(typeSetData, type, set);
-	const html = htmlForProblemSet(problemSet);
-
-
-	outputProblems(type, problems);
-	setSetLabel(set);
-	setupMaxVarsForSet(set);
-	displayReadySetGo();
-}
-
-function changeToBlackWhiteLogo() {
-	var logo = document.getElementById('logo');
-	var logoSecond = document.getElementById('logoSecond');
-	var zachSVG = document.getElementById('zachSVG');
-
-	logoSecond.classList.remove("logoLighter");
-	logoSecond.classList.add("logoDark");
-	logoSecond.classList.add("logoDarkLighter");
-
-	logo.classList.remove("logo");
-	logo.classList.add("logoDark");
-
-	zachSVG.classList.add("zachSVGBW")
-	zachSVG.style.clipPath = "unset";
-}
-
-function changeToColorLogo() {
-	var logo = document.getElementById('logo');
-	var logoSecond = document.getElementById('logoSecond');
-	var zachSVG = document.getElementById('zachSVG');
-
-	logoSecond.classList.remove("logoDark");
-	logoSecond.classList.remove("logoDarkLighter");
-	logoSecond.classList.add("logoLighter");
-
-	logo.classList.remove("logoDark");
-	logo.classList.add("logoColor");
-
-	zachSVG.classList.remove("zachSVGBW")
-
-	zachSVG.style.clipPath = "unset";
-
-}
-
-function showCloseButton() {
-	var el = document.getElementById('home');
-	el.style.display = 'block';
-}
-
-function hideCloseButton() {
-	var el = document.getElementById('home');
-	el.style.display = 'none';
-}
-
-function showMessage() {
-	var el = document.getElementById('message');
-	el.style.display = 'block';
-}
-
-function hideMessage() {
-	var el = document.getElementById('message');
-	el.style.display = 'none';
-}
-
-function hideScoreSheet() {
-	var scoreSheetID = 	document.getElementById("scoreSheet");
-		scoreSheetID.style.display = "none";
-}
-
-
-function htmlForType(type, prob, idx) {
-	var firstNum = prob[0];
-	var secNum = prob[1];
-
-	var topVal = getRandMoveValue();
-	var rightVal = getRandMoveValue();
-	var bottomVal = getRandMoveValue();
-	var leftVal = getRandMoveValue();
-
-	var html = "";
-	switch(type) {
-	    case 'Multiplication':
-	    	html = "<div class='mult' style='top:" + topVal + "em; right:" + rightVal + "em; bottom:" + bottomVal + "em; left:" + leftVal +  "em;' >\
-	    				<div class='top'>\
-		    				<div class='rightSide'>\
-			    				<div class='product productFirstNum'>"
-			    				+ firstNum + 
-			    				"</div>\
-			    				<div class='product productSecNum'>"
-			    				+ secNum + 
-			    				"</div>\
-			    			</div>\
-		    				<div class='leftSide'>\
-		    					<div class='symbol'>\
-			    					&times;\
-			    				</div>\
-		    				</div>\
-			    			<div class='clearer'></div>\
-		    			</div>\
-	    				<div class='bottom'>\
-		    				<div class='inputArea'>\
-		    					<input type='text' class='answers' id='answer_"
-		    					+ idx +
-		    					"' onKeyPress='validate(event);'></input>\
-			    			</div>\
-			    			<div class='clearer'></div>\
-		    			</div>\
-	    			</div>";
-	        break;
-	    case 'Division':
-	    	html = "<div class='mult' style='top:" + topVal + "em; right:" + rightVal + "em; bottom:" + bottomVal + "em; left:" + leftVal +  "em;' >\
-	    				<div class='top'>\
-		    				<div class='inputArea'>\
-		    					<input type='text' class='answers' id='answer_"
-		    					+ idx +
-		    					"' onKeyPress='validate(event);'></input>\
-			    			</div>\
-			    			<div class='clearer'></div>\
-	    				<div class='bottom'>\
-		    				<div class='numerator'>\
-			    				<div class='division'>"
-			    				+ firstNum + 
-			    				"</div>\
-		    				</div>\
-		    				<div class='denominator'>\
-			    				<div class='division'>"
-			    				+ secNum + 
-			    				"</div>\
-			    			</div>\
-			    			<div class='clearer'></div>\
-		    			</div>\
-		    			</div>\
-	    			</div>";
-	        break;
-	    default:
 	}
 
-	return html;
-}
+	function displayProblemSetPage(type, set) {
+		changeToBlackWhiteLogo();
+		showCloseButton();
+		showMessage();
+		// blurMain();
+
+		selectedType = type;
+		selectedSet = set;
+
+		const problemSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);
+		const html = MM.htmlForTypeProblemSet(type, problemSet);
+		htmlToMain(html);
+
+		setSetLabel(set);
+		setupMaxVarsForSet(set);
+		displayReadySetGo();
+		focusOnFirstProblem();
+	}
+
+	function setupProblemsForTypeAndSet(type, set) {
+		const problemSet = getProblemSetForTypeAndSet(typeSetData, type, set);
+		const html = htmlForProblemSet(problemSet);
+
+
+		outputProblems(type, problems);
+		setSetLabel(set);
+		setupMaxVarsForSet(set);
+		displayReadySetGo();
+	}
+
+	function changeToBlackWhiteLogo() {
+		var logo = document.getElementById('logo');
+		var logoSecond = document.getElementById('logoSecond');
+		var zachSVG = document.getElementById('zachSVG');
+
+		logoSecond.classList.remove("logoLighter");
+		logoSecond.classList.add("logoDark");
+		logoSecond.classList.add("logoDarkLighter");
+
+		logo.classList.remove("logo");
+		logo.classList.add("logoDark");
+
+		zachSVG.classList.add("zachSVGBW")
+		zachSVG.style.clipPath = "unset";
+	}
+
+	function changeToColorLogo() {
+		var logo = document.getElementById('logo');
+		var logoSecond = document.getElementById('logoSecond');
+		var zachSVG = document.getElementById('zachSVG');
+
+		logoSecond.classList.remove("logoDark");
+		logoSecond.classList.remove("logoDarkLighter");
+		logoSecond.classList.add("logoLighter");
+
+		logo.classList.remove("logoDark");
+		logo.classList.add("logoColor");
+
+		zachSVG.classList.remove("zachSVGBW")
+
+		zachSVG.style.clipPath = "unset";
+
+	}
+
+	function showCloseButton() {
+		var el = document.getElementById('home');
+		el.style.display = 'block';
+	}
+
+	function hideCloseButton() {
+		var el = document.getElementById('home');
+		el.style.display = 'none';
+	}
+
+	function showMessage() {
+		var el = document.getElementById('message');
+		el.style.display = 'block';
+	}
+
+	function hideMessage() {
+		var el = document.getElementById('message');
+		el.style.display = 'none';
+	}
+
+	function hideScoreSheet() {
+		var scoreSheetID = document.getElementById("scoreSheet");
+		scoreSheetID.style.display = "none";
+	}
+
 
 </script>
 
@@ -604,28 +485,31 @@ function htmlForType(type, prob, idx) {
 
 	<div id="scoreSheet">
 		<div id="scoreContent">
-		    <a href="#" onClick="displayMainPage();"><span>Back</span></a>
+			<a href="#" onClick="displayMainPage();">
+				<span>Back</span>
+			</a>
 
-		    <div id="scoreMessage">
-		    </div>
+			<div id="scoreMessage">
+			</div>
 
 			<div id="score">
 				<div id="numCorrect"></div>
 				<div id="passCheck" onClick="displayMainPage();">
 					<svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
-						<circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
-						<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+						<circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none" />
+						<path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8" />
 					</svg>
 				</div>
 			</div>
-		</div>	
+		</div>
 	</div>
 
 
 	<div id="wrapper">
 		<div id="banner">
 			<!-- <div id="logo">MM</div> -->
-			<div id="logo" onClick="displayMainPage();">MAD<span id="logoSecond" class="logoLighter">MINUTES</span>
+			<div id="logo" onClick="displayMainPage();">MAD
+				<span id="logoSecond" class="logoLighter">MINUTES</span>
 				<img id="zachSVG" src="zach-dinosaur.svg"></img>
 			</div>
 
@@ -635,7 +519,10 @@ function htmlForType(type, prob, idx) {
 
 
 			<div id="home" onClick="displayMainPage();">
-				<div id="setTitle"><span class="weakerFont">Set </span><span id="setLabel">A</span></div>
+				<div id="setTitle">
+					<span class="weakerFont">Set </span>
+					<span id="setLabel">A</span>
+				</div>
 				<div class="close-button"></div>
 				<!-- <div class="clearer"></div> -->
 			</div>
