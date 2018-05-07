@@ -9,10 +9,10 @@
             ADD: "Addition",
         },
         TYPE_CALCULATION: {
-            MUL: (a, b, z) => { return a * b === z },
-            DIV: (a, b, z) => { return a / b === z },
-            SUB: (a, b, z) => { return a - b === z },
-            ADD: (a, b, z) => { return a + b === z },
+            "Multiplication": (a, b, z) => { return parseFloat(a) * parseFloat(b) === parseFloat(z) },
+            "Division": (a, b, z) => { return parseFloat(a) / parseFloat(b) === parseFloat(z) },
+            "Subtraction": (a, b, z) => { return parseFloat(a) - parseFloat(b) === parseFloat(z) },
+            "Addition": (a, b, z) => { return parseFloat(a) + parseFloat(b) === parseFloat(z) },
         },
         ERRORS: {
             NO_TYPE_FOUND: "No Type found.",
@@ -40,10 +40,10 @@
      */
     exports.checkAnswers = function (probSet, answers, checkFn) {
         return probSet.reduce((wrongArr, prob, i) => {
-            const a = prob[0];
-            const b = prob[1];
+            const a = parseFloat(prob[0]);
+            const b = parseFloat(prob[1]);
 
-            const z = answers[i];
+            const z = parseFloat(answers[i]);
 
             if (checkFn(a, b, z) === false)
                 wrongArr.push(i);
@@ -252,26 +252,6 @@
     }
 
 
-
-    //https://stackoverflow.com/a/2450976
-    function shuffle(array) {
-        var currentIndex = array.length, temporaryValue, randomIndex;
-
-        // While there remain elements to shuffle...
-        while (0 !== currentIndex) {
-
-            // Pick a remaining element...
-            randomIndex = Math.floor(Math.random() * currentIndex);
-            currentIndex -= 1;
-
-            // And swap it with the current element.
-            temporaryValue = array[currentIndex];
-            array[currentIndex] = array[randomIndex];
-            array[randomIndex] = temporaryValue;
-        }
-
-        return array;
-    }
 
 
 

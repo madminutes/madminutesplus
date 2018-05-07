@@ -1,3 +1,16 @@
+		/////////////// DEBUG /////////////////////////
+		// displayProblemSetPage(MM.CONST.TYPE.MUL, "50 A");
+		// fillInAnswers(true, selectedProblemData, (a,b)=> {return a*b});
+
+		// displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
+		// fillInAnswers(true, selectedProblemData, (a, b) => { return a / b });
+
+		// fillInAnswers(false);
+
+		// var spaceKey = 32;
+		// simulateKeydown(spaceKey);
+		/////////////// DEBUG /////////////////////////
+
 function fillInAnswers(isAllCorrect = true, problemSet, calcFn) {
     const className = "answers";
     const probs = document.getElementsByClassName(className);

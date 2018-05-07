@@ -16,14 +16,17 @@
 
 <script>
 	const typeSetData = CONFIG.data;
-	var timeoutA = null;
-	var timeoutB = null;
-
+	var timeoutYellowLight = null;
+	var timeoutGreenLight = null;
 	var countDownTimeout = null;
+	var isTiming = false;
 
 	var currentTime = null;
+	var currentMilliseconds = 0;
+	var timeTaken = 0;
 
 	var selectedType = null;
+	var selectedTypeCalc = null;
 	var selectedSet = null;
 	var selectedProblemData = null;  // randomized problems can go here. 
 	var selectedMaxPass = null;
@@ -31,20 +34,7 @@
 	var numberCorrect = 0;
 
 	function setup() {
-		// var el = document.getElementById('foo');
-		// el.innerHTML = 'Hello World!';
-
-
-		// displayMainPage();
-		// displayProblemSetPage(MM.CONST.TYPE.MUL, "K");
-
-/////////////// DEBUG /////////////////////////
-		displayProblemSetPage(MM.CONST.TYPE.DIV, "C");
-		fillInAnswers(true, selectedProblemData, (a,b)=> {return a/b});
-		// fillInAnswers(false);
-		var spaceKey = 32;
-		simulateKeydown(spaceKey);
-/////////////// DEBUG /////////////////////////
+		displayMainPage();
 	}
 
 	document.addEventListener('keydown', function (e) {
@@ -114,20 +104,67 @@
 	function htmlToMain(html) { htmlToDiv("mathContent", html); }
 
 	function displayReadySetGo() {
+		isTiming = true;
+		timeTaken = 0;
 		outputReadySetGoMessage("Ready", "redLight");
-		timeoutA = setTimeout(function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
-		timeoutB = setTimeout(function () {
+		timeoutYellowLight = setTimeout(function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
+		timeoutGreenLight = setTimeout(function () {
 			outputReadySetGoMessage("Go", "greenLight");
 			var el = document.getElementById('mathContent');
 			el.classList.remove("blur");
 
 
-			startCountDown();
+			startCountDownMilliseconds();
 		}, 3000);
 
 		// calculateScore();
 	}
 
+	// from https://codepen.io/ishanbakshi/pen/pgzNMv
+	function startCountDownMilliseconds() {
+		const millisecondInc = 10;
+		currentMilliseconds += millisecondInc;
+		var secDecrement = currentMilliseconds === 1000 ? 1 : 0;
+		if (currentMilliseconds === 1000)
+			currentMilliseconds = 0;
+
+		// var presentTime = document.getElementById('countDown').innerHTML;
+		timeTaken += millisecondInc;
+		// console.log(currentTime);
+		var timeArray = currentTime.split(/[:]+/);
+		var m = timeArray[0];
+		var s = checkSecond((timeArray[1] - secDecrement));
+		if (s == 59) { m = m - 1 }
+
+		if (s == "00" && m == 0) {
+			calculateScore();
+			return;
+		}
+
+
+		var lcta = selectedMaxTime.split(/[:]+/);
+		var m_last = lcta[0];
+		var s_last = lcta[1];
+		var lastCurrentSetTimeTotalSeconds = parseInt(m_last) * 60 + parseInt(s_last);
+		var currentTimeTotalSeconds = parseInt(m) * 60 + parseInt(s);
+		var percentageComplete = currentTimeTotalSeconds / lastCurrentSetTimeTotalSeconds;
+
+		var maxClip = 48; // pixels
+		var startFaster = 0; // start 12 pixels in
+
+		var progress = maxClip * (1 - percentageComplete) + startFaster;
+		progress = Math.ceil(progress);
+
+		var svgID = document.getElementById('zachSVG');
+		svgID.style.clipPath = "circle(" + progress + "px at 0 0px)";
+
+		// document.getElementById('countDown').innerHTML = m + ":" + s;
+
+		currentTime = m + ":" + s;
+		// console.log( percentageComplete + " -- " + progress + " -- " + m + ":" + s + ":" + currentMilliseconds);
+
+		countDownTimeout = setTimeout(startCountDownMilliseconds, millisecondInc);
+	}
 
 
 	// from https://codepen.io/ishanbakshi/pen/pgzNMv
@@ -138,7 +175,7 @@
 		var s = checkSecond((timeArray[1] - 1));
 		if (s == 59) { m = m - 1 }
 
-		if (m < 0) {
+		if (s < 0) {
 			console.log('timer completed')
 			calculateScore();
 			return;
@@ -175,26 +212,122 @@
 	}
 
 	function clearTimeouts() {
-		if (timeoutA)
-			clearTimeout(timeoutA);
-		if (timeoutB)
-			clearTimeout(timeoutB);
+		isTiming = false;
+
+		if (timeoutYellowLight)
+			clearTimeout(timeoutYellowLight);
+		if (timeoutGreenLight)
+			clearTimeout(timeoutGreenLight);
 		if (countDownTimeout)
 			clearTimeout(countDownTimeout);
 	}
 
+	function insertStatsInCookieTimeTaken(type, set, time, accuracy) {
+		let highScoresCookie = null;
+		let cookieName = "highScoresTimeTaken";
+		let cookieGet = getCookie(cookieName);
+
+		highScoresCookie = cookieGet ? JSON.parse(atob(cookieGet)) : {};
+
+		highScoresCookie[type] = highScoresCookie[type] || {};
+		highScoresCookie[type][set] = highScoresCookie[type][set] || [];
+
+		// push and then sort by time
+		// take out the top 3
+		highScoresCookie[type][set].push([time, accuracy]);
+		highScoresCookie[type][set].sort((a, b) => a[0] - b[0]);
+
+		if (highScoresCookie[type][set].length > 3)
+			highScoresCookie[type][set] = highScoresCookie[type][set].slice(0, 3);
+
+		setCookie(cookieName, btoa(JSON.stringify(highScoresCookie)), 10000); // 27yrs expiration.... 
+
+		///////////// DEBUG //////////////////
+		// let testCookie = getCookie(cookieName);
+		// let highScores = JSON.parse(atob(testCookie));
+		// console.log(highScores);
+		///////////// DEBUG //////////////////
+	}
+
+	function insertStatsInCookieAccuracy(type, set, time, accuracy) {
+		let highScoresCookie = null;
+		let cookieName = "highScoresAccuracy";
+		let cookieGet = getCookie(cookieName);
+
+		highScoresCookie = cookieGet ? JSON.parse(atob(cookieGet)) : {};
+
+		highScoresCookie[type] = highScoresCookie[type] || {};
+		highScoresCookie[type][set] = highScoresCookie[type][set] || [];
+
+		// push and then sort by time
+		// take out the top 3
+		highScoresCookie[type][set].push([time, accuracy]);
+		highScoresCookie[type][set].sort((a, b) => b[1] - a[1]);
+
+		if (highScoresCookie[type][set].length > 3)
+			highScoresCookie[type][set] = highScoresCookie[type][set].slice(0, 3);
+
+		setCookie(cookieName, btoa(JSON.stringify(highScoresCookie)), 10000); // 27yrs expiration.... 
+
+		///////////// DEBUG //////////////////
+		// let testCookie = getCookie(cookieName);
+		// let highScores = JSON.parse(atob(testCookie));
+		// console.log(highScores);
+		///////////// DEBUG //////////////////
+	}
+
+
 	function calculateScore() {
 		clearTimeouts();
-
 		console.log("Calculating score.");
+
 		var el = document.getElementById('scoreSheet');
 		el.classList.add("scoreSheetSlide");
 
-		numberCorrect = 0; // reset this
+		// numberCorrect = 0; // reset this
 
-		checkNumberCorrect(selectedType);
+		const className = "answers";
+		const answersInputs = document.getElementsByClassName(className);
+		const answers = htmlCollectionInputValuesToArr(answersInputs);
+		const typeCalc = MM.CONST.TYPE_CALCULATION[selectedType];
+		selectedTypeCalc = typeCalc;
+		const wrongAnswersIndexes = MM.checkAnswers(selectedProblemData, answers, typeCalc);
 
-		displayScoring();
+		// highlight the wrong answers
+		wrongAnswersIndexes.forEach((wrongAnswerIdx, i) => {
+			var answerInput = document.getElementById("answer_" + wrongAnswerIdx);
+
+			// if any input changes on wrong problems, then we can change the class to correct
+			answerInput.addEventListener('input', function (evt) {
+				// console.log(this);
+				var idx = getIdxFromInputID(this.id);
+				var prob = selectedProblemData[idx];
+				var a = prob[0];
+				var b = prob[1];
+				var z = this.value
+
+				if (selectedTypeCalc(a, b, z)) {
+					answerInput.classList.remove("checkAnswer");
+					answerInput.classList.add("correctedAnswer");
+				}
+			});
+
+			var prob = selectedProblemData[wrongAnswerIdx];
+			var a = prob[0];
+			var b = prob[1];
+			var z = parseFloat(answerInput.value);
+			if (selectedTypeCalc(a, b, z) === false) {
+				answerInput.classList.add("checkAnswer");
+			}
+			// else {
+			// 	answerInputID.classList.remove("checkAnswer");
+			// }
+		});
+
+		// find number correct 
+		const numberCorrect = selectedProblemData.length - wrongAnswersIndexes.length;
+		displayScoring(numberCorrect, selectedProblemData);
+
 
 		// pass , try again
 		// # total 
@@ -230,61 +363,7 @@
 		}
 	}
 
-	function checkNumberCorrect(type) {
-		selectedProblemData.forEach(function (prob, i) {
-			// go through each problem and check the input answer with calculated one
-			// if it's wrong, then highlight the wrong answer in red. 
-
-			var firstNum = prob[0];
-			var secNum = prob[1];
-			var calculatedAnswer = null;
-
-			switch (type) {
-				case "Multiplication":
-					calculatedAnswer = firstNum * secNum;
-					break;
-				case "Division":
-					calculatedAnswer = firstNum / secNum;
-					break;
-				default:
-			}
-
-
-			// console.log(firstNum + " " + secNum + " = " + calculatedAnswer );
-
-			var answerInputID = document.getElementById("answer_" + i);
-			if (answerInputID.value != "") {
-
-				// if any input changes on wrong problems, then we can change the class to correct
-				answerInputID.addEventListener('input', function (evt) {
-					// console.log(this);
-
-					var studentAnswer = this.value
-
-					var idx = getIdxFromInputID(this.id);
-					var prob = selectedProblemData[idx];
-					var firstNum = prob[0];
-					var secNum = prob[1];
-
-					if (calculatedAnswer == studentAnswer) {
-						answerInputID.classList.remove("checkAnswer");
-						answerInputID.classList.add("correctedAnswer");
-					}
-				});
-
-				var studentAnswer = parseFloat(answerInputID.value);
-				if (calculatedAnswer != studentAnswer) {
-					answerInputID.classList.add("checkAnswer");
-				}
-				else {
-					numberCorrect++;
-				}
-			}
-		});
-	}
-
-
-	function displayScoring() {
+	function displayScoring(numberCorrect, problemSet) {
 		var scoreMessageArray = CONFIG.tryAgainMessages;
 
 		var numCorrectID = document.getElementById("numCorrect");
@@ -295,6 +374,13 @@
 			passCheckID.style.display = "block";
 
 			scoreMessageArray = CONFIG.passedMessages;
+
+			// if passed, place the score in the cookie if it is a high score
+			let accuracy = numberCorrect / problemSet.length;
+			console.log('Time Taken: ', msToTime(timeTaken));
+			console.log('Accuracy: ', accuracy);
+			insertStatsInCookieTimeTaken(selectedType, selectedSet, timeTaken, accuracy);
+			insertStatsInCookieAccuracy(selectedType, selectedSet, timeTaken, accuracy);
 		} else {
 			var passCheckID = document.getElementById("passCheck");
 			passCheckID.style.display = "none";
@@ -326,22 +412,30 @@
 
 	function htmlCollectionInputValuesToArr(htmlColl) {
 		let arr = [];
-		iterateCollection(probs)((p, i) => {
+		iterateCollection(htmlColl)((p, i) => {
 			arr.push(p.value);
 		});
 		return arr;
 	}
 
 	function checkForCompletion(cb) {
+		// if countdownTimer is null then
+		// we don't need to check answers
+		// just run the cb function
+		if (isTiming === false) {
+			cb;
+			return;
+		}
+
 		// if all inputs have been filled, then score the answers
 		// otherwise run the cb
 		const className = "answers";
-		const probs = document.getElementsByClassName(className);
+		const answers = document.getElementsByClassName(className);
 
 		let inputsFilledCorrectly = true;
-		iterateCollection(probs)((p, i) => {
-			if (isNumeric(p.value) == false) {
-				p.classList.add("checkAnswer");
+		iterateCollection(answers)((ans, i) => {
+			if (isNumeric(ans.value) == false) {
+				// ans.classList.add("checkAnswer");
 				inputsFilledCorrectly = false
 			}
 		});
@@ -350,6 +444,8 @@
 			calculateScore();
 		else
 			cb
+
+		return;
 	}
 
 	function focusOnFirstProblem() {
@@ -363,7 +459,8 @@
 			var incremented = parseInt(idx) + 1;
 
 			var nextEL = document.getElementById("answer_" + incremented);
-			nextEL.focus();
+			if (nextEL)
+				nextEL.focus();
 		}
 	}
 
@@ -373,7 +470,8 @@
 			var decremented = parseInt(idx) - 1;
 
 			var nextEL = document.getElementById("answer_" + decremented);
-			nextEL.focus();
+			if (nextEL)
+				nextEL.focus();
 		}
 	}
 
@@ -396,9 +494,9 @@
 		changeToBlackWhiteLogo();
 		showCloseButton();
 		showMessage();
-/////////////// DEBUG /////////////////////////
-		// blurMain();
-/////////////// DEBUG /////////////////////////
+		/////////////// DEBUG /////////////////////////
+		blurMain();
+		/////////////// DEBUG /////////////////////////
 
 		selectedType = type;
 		selectedSet = set;
@@ -544,6 +642,7 @@
 			<div class="clearer"></div>
 		</div>
 		<div id="mathContent"></div>
+		<div id="countDown"></div>
 
 	</div>
 </body>

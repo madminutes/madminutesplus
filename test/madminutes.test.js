@@ -41,7 +41,7 @@ test('able to retrieve a problem set', () => {
 
 test('problem set has right answers for multiplication', () => {
     const type = MM.CONST.TYPE.MUL;
-    const typeCalc = MM.CONST.TYPE_CALCULATION.MUL;
+    const typeCalc = MM.CONST.TYPE_CALCULATION[type]; //?
     const set = "C";
     const probSet = MM.getProblemSetForTypeAndSet(typeSetData, type, set);
     const allCorrectAnswers = [
