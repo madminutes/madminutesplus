@@ -442,11 +442,17 @@
 		document.getElementById('stats').style.display = document.getElementById('stats').style.display === 'flex' ? 'none' : 'flex';
 	}
 
+	function clearStatsData() {
+		document.getElementById('currentStats').innerHTML = "";
+		document.getElementById('highScoresTimeTaken').innerHTML = "";
+		document.getElementById('highScoresAccuracy').innerHTML = "";
+	}
+
 	function setCurrentStats(timeTaken, accuracy) {
 		let el = document.getElementById('currentStats');
 		el.innerHTML = "You passed in " + msToTime(timeTaken) + " with a " + toPercentage(accuracy) + " of questions answered correctly.";
 	}
-
+	
 	function outputReadySetGoMessage(message, cssClass) {
 		var el = document.getElementById('message');
 		el.innerHTML = "";
@@ -566,6 +572,7 @@
 
 		setSetLabel(set);
 		setupMaxVarsForSet(set);
+		clearStatsData(); 
 		displayReadySetGo();
 		focusOnFirstProblem();
 	}
