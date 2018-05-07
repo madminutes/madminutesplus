@@ -138,7 +138,7 @@
 			calculateScore();
 			return;
 		}
-		
+
 		m = m < 0 ? 0 : m;
 
 		var lcta = selectedMaxTime.split(/[:]+/);
@@ -390,8 +390,6 @@
 			var passCheckID = document.getElementById("passCheck");
 			passCheckID.style.display = "none";
 
-			document.getElementById('statsHeader').style.display = 'none';
-			document.getElementById('currentStats').style.display = 'none';
 			document.getElementById('stats').style.display = 'none';
 		}
 
@@ -407,9 +405,7 @@
 	}
 
 	function displayStats(selectedType, selectedSet) {
-		 document.getElementById('stats').style.display = 'flex';
-		 document.getElementById('statsHeader').style.display = 'block';
-		 document.getElementById('currentStats').style.display = 'block';
+		document.getElementById('stats').style.display = 'flex';
 
 		["highScoresTimeTaken", "highScoresAccuracy"].forEach((name) => {
 			const highScoresCookie = getCookie(name);
@@ -437,6 +433,10 @@
 				}
 			}
 		});
+	}
+
+	function toggleStatsDisplay() {
+		document.getElementById('stats').style.display = document.getElementById('stats').style.display === 'flex' ? 'none' : 'flex';
 	}
 
 	function setCurrentStats(timeTaken, accuracy) {
@@ -542,7 +542,7 @@
 
 	function removeMainBlur() {
 		var el = document.getElementById('mathContent');
-			el.classList.remove("blur");
+		el.classList.remove("blur");
 	}
 
 	function displayProblemSetPage(type, set) {
@@ -648,7 +648,7 @@
 
 <body onLoad="setup();">
 
-	<div id="scoreSheet">
+	<div id="scoreSheet" onclick="toggleStatsDisplay()">
 		<div id="scoreContent">
 			<a href="#" onClick="displayMainPage();">
 				<span>Back</span>
@@ -667,17 +667,21 @@
 				</div>
 			</div>
 		</div>
-		<div id="statsHeader">Current Stats for Set <span id="setLabelStats"></span>
-		</div>
-		<div id="currentStats"></div>
 		<div id="stats">
-			<div class="topGroup">
-				<div class="topHeader">Top Three for Speed</div>
-				<div id="highScoresTimeTaken"></div>
+			<div id="statsHeader">Current Stats for Set
+				<span id="setLabelStats"></span>
 			</div>
-			<div class="topGroup">
-				<div class="topHeader">Top Three for Percentage Correct</div>
-				<div id="highScoresAccuracy"></div>
+			<div id="currentStats"></div>
+
+			<div id="statGroups">
+				<div class="topGroup">
+					<div class="topHeader">Top Three for Speed</div>
+					<div id="highScoresTimeTaken"></div>
+				</div>
+				<div class="topGroup">
+					<div class="topHeader">Top Three for Percentage Correct</div>
+					<div id="highScoresAccuracy"></div>
+				</div>
 			</div>
 		</div>
 	</div>
