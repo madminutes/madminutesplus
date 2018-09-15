@@ -112,6 +112,7 @@
 		outputReadySetGoMessage("Ready", "redLight");
 		timeoutYellowLight = setTimeout(function () { outputReadySetGoMessage("Set", "yellowLight") }, 1500);
 		timeoutGreenLight = setTimeout(function () {
+			window.scrollTo(0,0);
 			outputReadySetGoMessage("Go", "greenLight");
 			removeMainBlur();
 
