@@ -710,7 +710,6 @@
 	exports.tryAgainMessages = [
 		"Keep it up, you can do it!",
 		"Keep up the hard work!",
-		"I know you can do better.",
 		"Keep practicing!",
 	];
 
